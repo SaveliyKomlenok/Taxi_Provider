@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="tables_setup" author="Saveliy">
+        <createTable tableName="passengers">
+            <column name="passenger_id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="firstname" type="varchar"/>
+            <column name="surname" type="varchar"/>
+            <column name="patronymic" type="varchar"/>
+            <column name="email" type="varchar"/>
+            <column name="phone_number" type="varchar"/>
+            <column name="is_restricted" type="boolean"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
