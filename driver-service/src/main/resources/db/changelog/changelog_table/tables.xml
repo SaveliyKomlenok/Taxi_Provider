@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="drivers_and_cars_table_setup" author="Saveliy">
+        <createTable tableName="drivers">
+            <column name="driver_id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="car_id" type="bigint"/>
+            <column name="firstname" type="varchar"/>
+            <column name="surname" type="varchar"/>
+            <column name="patronymic" type="varchar"/>
+            <column name="email" type="varchar"/>
+            <column name="phone_number" type="varchar"/>
+            <column name="gender" type="varchar"/>
+            <column name="is_restricted" type="boolean"/>
+        </createTable>
+
+        <createTable tableName="cars">
+            <column name="car_id" autoIncrement="true" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="kind" type="varchar"/>
+            <column name="color" type="varchar"/>
+            <column name="number" type="varchar"/>
+            <column name="tariff" type="varchar"/>
+            <column name="is_restricted" type="boolean"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
