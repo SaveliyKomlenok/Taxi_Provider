@@ -49,10 +49,4 @@ public class DriverController {
         DriverResponse response = driverService.changeRestrictionsStatus(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
-        driverService.delete(id);
-        return new ResponseEntity<>("Driver with id " + id + " successfully deleted", HttpStatus.OK);
-    }
 }

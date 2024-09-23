@@ -49,10 +49,4 @@ public class CarController {
         CarResponse response = carService.changeRestrictionsStatus(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
-        carService.delete(id);
-        return new ResponseEntity<>("Car with id " + id + " successfully deleted", HttpStatus.OK);
-    }
 }

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.software.modsen.driverservice.util.ExceptionMessages.CAR_NOT_EXISTS;
+
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
@@ -24,7 +26,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponse getById(Long id) {
         Car car = carRepository.findById(id)
-                .orElseThrow(() -> new CarIsNotExistsException("Car with this id is not exists"));
+                .orElseThrow(() -> new CarIsNotExistsException(String.format(CAR_NOT_EXISTS, id)));
         return mapper.map(car, CarResponse.class);
     }
 
@@ -45,7 +47,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponse update(CarUpdateRequest request) {
         carRepository.findById(request.getId())
-                .orElseThrow(() -> new CarIsNotExistsException("Car with this id is not exists"));
+                .orElseThrow(() -> new CarIsNotExistsException(String.format(CAR_NOT_EXISTS, request.getId())));
         Car car = carRepository.save(mapper.map(request, Car.class));
         return mapper.map(car, CarResponse.class);
     }
@@ -53,17 +55,9 @@ public class CarServiceImpl implements CarService {
     @Override
     public CarResponse changeRestrictionsStatus(Long id) {
         Car car = carRepository.findById(id)
-                .orElseThrow(() -> new CarIsNotExistsException("Car with this id is not exists"));
+                .orElseThrow(() -> new CarIsNotExistsException(String.format(CAR_NOT_EXISTS, id)));
         car.setRestricted(!car.isRestricted());
         carRepository.save(car);
         return mapper.map(car, CarResponse.class);
-    }
-
-    @Override
-    public void delete(Long id) {
-        if (!carRepository.existsById(id)) {
-            throw new CarIsNotExistsException("Car with this id is not exists");
-        }
-        carRepository.deleteById(id);
     }
 }

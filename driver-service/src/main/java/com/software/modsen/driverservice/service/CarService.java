@@ -16,6 +16,4 @@ public interface CarService {
     CarResponse update(CarUpdateRequest request);
 
     CarResponse changeRestrictionsStatus(Long id);
-
-    void delete(Long id);
 }

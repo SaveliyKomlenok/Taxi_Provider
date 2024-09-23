@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.software.modsen.driverservice.util.ExceptionMessages.CAR_OCCUPIED;
+import static com.software.modsen.driverservice.util.ExceptionMessages.DRIVER_NOT_EXISTS;
+
 @Service
 @RequiredArgsConstructor
 public class DriverServiceImpl implements DriverService {
@@ -27,7 +30,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponse getById(Long id) {
         Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new DriverIsNotExistsException("Driver with this id is not exists"));
+                .orElseThrow(() -> new DriverIsNotExistsException(String.format(DRIVER_NOT_EXISTS, id)));
         return mapper.map(driver, DriverResponse.class);
     }
 
@@ -49,7 +52,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponse update(DriverUpdateRequest request) {
         driverRepository.findById(request.getId())
-                .orElseThrow(() -> new DriverIsNotExistsException("Driver with this id is not exists"));
+                .orElseThrow(() -> new DriverIsNotExistsException(String.format(DRIVER_NOT_EXISTS, request.getId())));
         Driver driver = mapper.map(request, Driver.class);
         driver.setCar(checkCarOccupancy(request.getCar()));
         return mapper.map(driverRepository.save(driver), DriverResponse.class);
@@ -58,7 +61,7 @@ public class DriverServiceImpl implements DriverService {
     private Car checkCarOccupancy(Long id) {
         Car car = mapper.map(carService.getById(id), Car.class);
         if (driverRepository.findDriverByCarId(id).isPresent()) {
-            throw new CarIsOccupiedException("Car with this id is occupied");
+            throw new CarIsOccupiedException(String.format(CAR_OCCUPIED, id));
         }
         return car;
     }
@@ -66,17 +69,9 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponse changeRestrictionsStatus(Long id) {
         Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new DriverIsNotExistsException("Driver with this id is not exists"));
+                .orElseThrow(() -> new DriverIsNotExistsException(String.format(DRIVER_NOT_EXISTS, id)));
         driver.setRestricted(!driver.isRestricted());
         driverRepository.save(driver);
         return mapper.map(driver, DriverResponse.class);
-    }
-
-    @Override
-    public void delete(Long id) {
-        if (!driverRepository.existsById(id)) {
-            throw new DriverIsNotExistsException("Driver with this id is not exists");
-        }
-        driverRepository.deleteById(id);
     }
 }

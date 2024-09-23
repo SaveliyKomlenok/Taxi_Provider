@@ -16,6 +16,4 @@ public interface DriverService {
     DriverResponse update(DriverUpdateRequest request);
 
     DriverResponse changeRestrictionsStatus(Long id);
-
-    void delete(Long id);
 }
