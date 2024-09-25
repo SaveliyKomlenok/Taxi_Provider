@@ -32,5 +32,8 @@ public class Passenger {
     private String phoneNumber;
 
     @Column(name = "is_restricted")
-    private boolean isRestricted;
+    private boolean restricted;
+
+    @OneToOne(mappedBy = "passenger", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PassengerRating passengerRating;
 }

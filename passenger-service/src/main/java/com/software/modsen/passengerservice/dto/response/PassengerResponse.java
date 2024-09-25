@@ -1,4 +1,4 @@
-package com.software.modsen.passengerservice.dto;
+package com.software.modsen.passengerservice.dto.response;
 
 import lombok.*;
 

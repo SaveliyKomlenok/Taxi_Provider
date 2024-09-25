@@ -1,72 +1,71 @@
 package com.software.modsen.passengerservice.service.impl;
 
-import com.software.modsen.passengerservice.dto.PassengerCreateRequest;
-import com.software.modsen.passengerservice.dto.PassengerResponse;
-import com.software.modsen.passengerservice.dto.PassengerUpdateRequest;
 import com.software.modsen.passengerservice.entity.Passenger;
+import com.software.modsen.passengerservice.exception.PassengerIsAlreadyExistsException;
 import com.software.modsen.passengerservice.exception.PassengerIsNotExistsException;
-import com.software.modsen.passengerservice.service.PassengerService;
-
 import com.software.modsen.passengerservice.repository.PassengerRepository;
+import com.software.modsen.passengerservice.service.PassengerService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.software.modsen.passengerservice.util.ExceptionMessages.PASSENGER_ALREADY_EXISTS;
+import static com.software.modsen.passengerservice.util.ExceptionMessages.PASSENGER_NOT_EXISTS;
+
 @Service
 @RequiredArgsConstructor
 public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
-    private final ModelMapper mapper;
 
     @Override
-    public PassengerResponse getById(Long id) {
-        Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerIsNotExistsException("Passenger with this id is not exists"));
-        return mapper.map(passenger, PassengerResponse.class);
+    public Passenger getById(Long id) {
+        return getOrThrow(id);
     }
 
     @Override
-    public List<PassengerResponse> getAll(Integer pageNumber, Integer pageSize, String sortBy) {
-        return passengerRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))).getContent()
-                .stream()
-                .map(passenger -> mapper.map(passenger, PassengerResponse.class))
-                .toList();
-    }
-
-    @Override
-    public PassengerResponse save(PassengerCreateRequest request) {
-        Passenger passenger = passengerRepository.save(mapper.map(request, Passenger.class));
-        return mapper.map(passenger, PassengerResponse.class);
-    }
-
-    @Override
-    public PassengerResponse update(PassengerUpdateRequest request) {
-        if (passengerRepository.findById(request.getId()).isPresent()) {
-            Passenger passenger = passengerRepository.save(mapper.map(request, Passenger.class));
-            return mapper.map(passenger, PassengerResponse.class);
+    public List<Passenger> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted) {
+        if (includeRestricted != null && includeRestricted) {
+            return passengerRepository.findAllByRestrictedIsTrue(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy)));
         } else {
-            throw new PassengerIsNotExistsException("Passenger with this id is not exists");
+            return passengerRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))).getContent();
         }
     }
 
     @Override
-    public PassengerResponse changeRestrictionsStatus(Long id) {
-        Passenger passenger = passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerIsNotExistsException("Passenger with this id is not exists"));
+    public Passenger save(Passenger passenger) {
+        if(passengerRepository.findPassengerByEmailAndPhoneNumber(
+                        passenger.getEmail(),
+                        passenger.getPhoneNumber()).isPresent()){
+            throw new PassengerIsAlreadyExistsException(PASSENGER_ALREADY_EXISTS);
+        }
+        return passengerRepository.save(passenger);
+    }
+
+    @Override
+    public Passenger update(Passenger passenger) {
+        getOrThrow(passenger.getId());
+        Passenger existingPassenger = passengerRepository.findPassengerByEmailAndPhoneNumber(
+                        passenger.getEmail(),
+                        passenger.getPhoneNumber())
+                .orElse(null);
+        if (existingPassenger != null && !existingPassenger.getId().equals(passenger.getId())) {
+            throw new PassengerIsAlreadyExistsException(PASSENGER_ALREADY_EXISTS);
+        }
+        return passengerRepository.save(passenger);
+    }
+
+    @Override
+    public Passenger changeRestrictionsStatus(Long id) {
+        Passenger passenger = getOrThrow(id);
         passenger.setRestricted(!passenger.isRestricted());
-        passengerRepository.save(passenger);
-        return mapper.map(passenger, PassengerResponse.class);
+        return passengerRepository.save(passenger);
     }
 
-    @Override
-    public void delete(Long id) {
-        if (!passengerRepository.existsById(id)) {
-            throw new PassengerIsNotExistsException("Passenger with this id is not exists");
-        }
-        passengerRepository.deleteById(id);
+    private Passenger getOrThrow(Long id) {
+        return passengerRepository.findById(id)
+                .orElseThrow(() -> new PassengerIsNotExistsException(String.format(PASSENGER_NOT_EXISTS, id)));
     }
 }

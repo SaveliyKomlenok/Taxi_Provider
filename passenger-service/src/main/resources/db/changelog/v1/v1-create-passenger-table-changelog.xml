@@ -3,7 +3,13 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet id="tables_setup" author="Saveliy">
+    <changeSet id="v1-5" author="Komlenok Saveliy">
+        <preConditions>
+            <not>
+                <tableExists tableName="passengers"/>
+            </not>
+        </preConditions>
+
         <createTable tableName="passengers">
             <column name="passenger_id" autoIncrement="true" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>

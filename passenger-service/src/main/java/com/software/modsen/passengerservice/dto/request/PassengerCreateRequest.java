@@ -1,4 +1,4 @@
-package com.software.modsen.passengerservice.dto;
+package com.software.modsen.passengerservice.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -10,9 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PassengerUpdateRequest {
-    private Long id;
-
+public class PassengerCreateRequest {
     @Pattern(regexp = "^[а-яА-Я]{2,}\\s?-?[а-яА-Я]{2,}$", message = "Incorrect firstname")
     @Schema(defaultValue = "firstname")
     private String firstname;
