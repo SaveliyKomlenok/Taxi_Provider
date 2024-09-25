@@ -15,7 +15,7 @@ import java.util.List;
 public class RatingMapper {
     private final ModelMapper mapper;
 
-    public Rating fromResponseToEntity(RatingPassengerRequest request) {
+    public Rating fromRequestToEntity(RatingPassengerRequest request) {
         return Rating.builder()
                 .rideId(request.getRideId())
                 .driverId(request.getDriverId())

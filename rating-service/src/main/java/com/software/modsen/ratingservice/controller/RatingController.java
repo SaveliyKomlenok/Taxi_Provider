@@ -31,7 +31,7 @@ public class RatingController {
 
     @PostMapping("/passenger")
     public ResponseEntity<RatingResponse> ratedPassenger(@RequestBody @Valid RatingPassengerRequest request) {
-        Rating rating = ratingService.ratingPassenger(ratingMapper.fromResponseToEntity(request));
+        Rating rating = ratingService.ratingPassenger(ratingMapper.fromRequestToEntity(request));
         return new ResponseEntity<>(ratingMapper.fromEntityToResponse(rating), HttpStatus.CREATED);
     }
 
