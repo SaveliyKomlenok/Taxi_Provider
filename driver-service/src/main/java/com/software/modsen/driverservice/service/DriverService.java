@@ -1,19 +1,17 @@
 package com.software.modsen.driverservice.service;
 
-import com.software.modsen.driverservice.dto.DriverCreateRequest;
-import com.software.modsen.driverservice.dto.DriverResponse;
-import com.software.modsen.driverservice.dto.DriverUpdateRequest;
+import com.software.modsen.driverservice.entity.Driver;
 
 import java.util.List;
 
 public interface DriverService {
-    DriverResponse getById(Long id);
+    Driver getById(Long id);
 
-    List<DriverResponse> getAll(Integer pageNumber, Integer pageSize, String sortBy);
+    List<Driver> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted);
 
-    DriverResponse save(DriverCreateRequest request);
+    Driver save(Driver request);
 
-    DriverResponse update(DriverUpdateRequest request);
+    Driver update(Driver request);
 
-    DriverResponse changeRestrictionsStatus(Long id);
+    Driver changeRestrictionsStatus(Long id);
 }

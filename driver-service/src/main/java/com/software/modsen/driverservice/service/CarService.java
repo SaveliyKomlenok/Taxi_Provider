@@ -1,19 +1,17 @@
 package com.software.modsen.driverservice.service;
 
-import com.software.modsen.driverservice.dto.CarCreateRequest;
-import com.software.modsen.driverservice.dto.CarResponse;
-import com.software.modsen.driverservice.dto.CarUpdateRequest;
+import com.software.modsen.driverservice.entity.Car;
 
 import java.util.List;
 
 public interface CarService {
-    CarResponse getById(Long id);
+    Car getById(Long id);
 
-    List<CarResponse> getAll(Integer pageNumber, Integer pageSize, String sortBy);
+    List<Car> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted);
 
-    CarResponse save(CarCreateRequest request);
+    Car save(Car car);
 
-    CarResponse update(CarUpdateRequest request);
+    Car update(Car car);
 
-    CarResponse changeRestrictionsStatus(Long id);
+    Car changeRestrictionsStatus(Long id);
 }

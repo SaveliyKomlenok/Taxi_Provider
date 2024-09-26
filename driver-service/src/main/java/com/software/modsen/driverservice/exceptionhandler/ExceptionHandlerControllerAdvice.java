@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.exceptionhandler;
 
+import com.software.modsen.driverservice.exception.*;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,13 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
-    @ExceptionHandler(ExceptionManager.class)
-    public ResponseEntity<ErrorMessage> handleErrors(ExceptionManager exception){
+    @ExceptionHandler({CarNotExistsException.class,
+            CarOccupiedException.class,
+            DriverNotExistsException.class,
+            CarAlreadyExistsException.class,
+            DriverAlreadyExistsException.class,
+            DriverRatingNotExistsException.class})
+    public ResponseEntity<ErrorMessage> handleErrors(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(exception.getMessage()));
