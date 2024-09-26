@@ -1,5 +1,8 @@
 package com.software.modsen.passengerservice.exceptionhandler;
 
+import com.software.modsen.passengerservice.exception.PassengerAlreadyExistsException;
+import com.software.modsen.passengerservice.exception.PassengerNotExistsException;
+import com.software.modsen.passengerservice.exception.PassengerRatingNotExistsException;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +17,10 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorMessage> handleErrors(RuntimeException exception){
+    @ExceptionHandler({PassengerNotExistsException.class,
+            PassengerAlreadyExistsException.class,
+            PassengerRatingNotExistsException.class})
+    public ResponseEntity<ErrorMessage> handleErrors(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(exception.getMessage()));

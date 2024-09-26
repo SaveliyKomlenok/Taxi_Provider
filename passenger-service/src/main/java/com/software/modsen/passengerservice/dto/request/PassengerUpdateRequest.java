@@ -5,8 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
-import static com.software.modsen.passengerservice.util.Patterns.NAME_PATTERN;
-import static com.software.modsen.passengerservice.util.Patterns.PHONE_NUMBER_PATTERN;
+import static com.software.modsen.passengerservice.util.CustomValidatePatterns.NAME_PATTERN;
+import static com.software.modsen.passengerservice.util.CustomValidatePatterns.PHONE_NUMBER_PATTERN;
 
 @Getter
 @Setter

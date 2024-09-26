@@ -2,7 +2,7 @@ package com.software.modsen.passengerservice.service.impl;
 
 import com.software.modsen.passengerservice.entity.Passenger;
 import com.software.modsen.passengerservice.entity.PassengerRating;
-import com.software.modsen.passengerservice.exception.PassengerRatingIsNotExistsException;
+import com.software.modsen.passengerservice.exception.PassengerRatingNotExistsException;
 import com.software.modsen.passengerservice.repository.PassengerRatingRepository;
 import com.software.modsen.passengerservice.service.PassengerRatingService;
 import com.software.modsen.passengerservice.service.PassengerService;
@@ -35,6 +35,6 @@ public class PassengerRatingServiceImpl implements PassengerRatingService {
 
     private PassengerRating getOrThrow(Long passengerId) {
         return passengerRatingRepository.findPassengerRatingByPassengerId(passengerId)
-                .orElseThrow(() -> new PassengerRatingIsNotExistsException(String.format(RATING_NOT_EXISTS, passengerId)));
+                .orElseThrow(() -> new PassengerRatingNotExistsException(String.format(RATING_NOT_EXISTS, passengerId)));
     }
 }
