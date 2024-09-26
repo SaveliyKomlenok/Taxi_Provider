@@ -20,7 +20,7 @@
                              referencedTableName="passengers"
                              referencedColumnNames="passenger_id"/>
             </column>
-            <column name="rating" type="decimal"/>
+            <column name="rating" type="float"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
-    @ExceptionHandler(ExceptionManager.class)
-    public ResponseEntity<ErrorMessage> handleErrors(ExceptionManager exception){
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorMessage> handleErrors(RuntimeException exception){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(exception.getMessage()));

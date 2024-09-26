@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import static com.software.modsen.passengerservice.util.Patterns.NAME_PATTERN;
+import static com.software.modsen.passengerservice.util.Patterns.PHONE_NUMBER_PATTERN;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,15 +16,15 @@ import lombok.*;
 public class PassengerUpdateRequest {
     private Long id;
 
-    @Pattern(regexp = "^[а-яА-Я]{2,}\\s?-?[а-яА-Я]{2,}$", message = "Incorrect firstname")
+    @Pattern(regexp = NAME_PATTERN, message = "Incorrect firstname")
     @Schema(defaultValue = "firstname")
     private String firstname;
 
-    @Pattern(regexp = "^[а-яА-Я]{2,}\\s?-?[а-яА-Я]{2,}$",message = "Incorrect surname")
+    @Pattern(regexp = NAME_PATTERN,message = "Incorrect surname")
     @Schema(defaultValue = "surname")
     private String surname;
 
-    @Pattern(regexp = "^[а-яА-Я]{2,}\\s?-?[а-яА-Я]{2,}$",message = "Incorrect patronymic")
+    @Pattern(regexp = NAME_PATTERN,message = "Incorrect patronymic")
     @Schema(defaultValue = "patronymic")
     private String patronymic;
 
@@ -29,7 +32,7 @@ public class PassengerUpdateRequest {
     @Schema(defaultValue = "email")
     private String email;
 
-    @Pattern(regexp = "^\\+375(29|33|44|25)\\d{7}$", message = "Incorrect phone number")
+    @Pattern(regexp = PHONE_NUMBER_PATTERN, message = "Incorrect phone number")
     @Schema(defaultValue = "phone number")
     private String phoneNumber;
 }

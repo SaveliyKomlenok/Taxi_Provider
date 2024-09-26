@@ -1,8 +1,8 @@
 package com.software.modsen.passengerservice.service.impl;
 
 import com.software.modsen.passengerservice.entity.Passenger;
-import com.software.modsen.passengerservice.exception.PassengerIsAlreadyExistsException;
-import com.software.modsen.passengerservice.exception.PassengerIsNotExistsException;
+import com.software.modsen.passengerservice.exception.PassengerAlreadyExistsException;
+import com.software.modsen.passengerservice.exception.PassengerNotExistsException;
 import com.software.modsen.passengerservice.repository.PassengerRepository;
 import com.software.modsen.passengerservice.service.PassengerService;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class PassengerServiceImpl implements PassengerService {
         if(passengerRepository.findPassengerByEmailAndPhoneNumber(
                         passenger.getEmail(),
                         passenger.getPhoneNumber()).isPresent()){
-            throw new PassengerIsAlreadyExistsException(PASSENGER_ALREADY_EXISTS);
+            throw new PassengerAlreadyExistsException(PASSENGER_ALREADY_EXISTS);
         }
         return passengerRepository.save(passenger);
     }
@@ -52,7 +52,7 @@ public class PassengerServiceImpl implements PassengerService {
                         passenger.getPhoneNumber())
                 .orElse(null);
         if (existingPassenger != null && !existingPassenger.getId().equals(passenger.getId())) {
-            throw new PassengerIsAlreadyExistsException(PASSENGER_ALREADY_EXISTS);
+            throw new PassengerAlreadyExistsException(PASSENGER_ALREADY_EXISTS);
         }
         return passengerRepository.save(passenger);
     }
@@ -66,6 +66,6 @@ public class PassengerServiceImpl implements PassengerService {
 
     private Passenger getOrThrow(Long id) {
         return passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerIsNotExistsException(String.format(PASSENGER_NOT_EXISTS, id)));
+                .orElseThrow(() -> new PassengerNotExistsException(String.format(PASSENGER_NOT_EXISTS, id)));
     }
 }

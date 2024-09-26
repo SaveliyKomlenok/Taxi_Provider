@@ -16,19 +16,19 @@ import java.util.List;
 public class PassengerMapper {
     private final ModelMapper mapper;
 
-    public Passenger fromResponseToEntity(PassengerCreateRequest request) {
+    public Passenger toEntity(PassengerCreateRequest request) {
         return mapper.map(request, Passenger.class);
     }
 
-    public Passenger fromResponseToEntity(PassengerUpdateRequest request) {
+    public Passenger toEntity(PassengerUpdateRequest request) {
         return mapper.map(request, Passenger.class);
     }
 
-    public PassengerResponse fromEntityToResponse(Passenger passenger) {
+    public PassengerResponse toResponse(Passenger passenger) {
         return mapper.map(passenger, PassengerResponse.class);
     }
 
-    public PassengerListResponse fromListEntityToListResponse(List<Passenger> rideList) {
+    public PassengerListResponse toListResponse(List<Passenger> rideList) {
         List<PassengerResponse> passengerResponseList = rideList.stream()
                 .map(ride -> mapper.map(ride, PassengerResponse.class))
                 .toList();
