@@ -31,7 +31,7 @@ public class Car {
     private Tariff tariff;
 
     @Column(name = "is_restricted")
-    private boolean isRestricted;
+    private boolean restricted;
 
     @OneToOne(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Driver driver;

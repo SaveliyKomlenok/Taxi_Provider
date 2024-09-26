@@ -1,77 +1,95 @@
 package com.software.modsen.driverservice.service.impl;
 
-import com.software.modsen.driverservice.dto.DriverCreateRequest;
-import com.software.modsen.driverservice.dto.DriverResponse;
-import com.software.modsen.driverservice.dto.DriverUpdateRequest;
 import com.software.modsen.driverservice.entity.Car;
 import com.software.modsen.driverservice.entity.Driver;
-import com.software.modsen.driverservice.exception.CarIsOccupiedException;
-import com.software.modsen.driverservice.exception.DriverIsNotExistsException;
+import com.software.modsen.driverservice.exception.CarOccupiedException;
+import com.software.modsen.driverservice.exception.DriverAlreadyExistsException;
+import com.software.modsen.driverservice.exception.DriverNotExistsException;
 import com.software.modsen.driverservice.repository.DriverRepository;
+import com.software.modsen.driverservice.service.CarService;
 import com.software.modsen.driverservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.software.modsen.driverservice.util.ExceptionMessages.CAR_OCCUPIED;
-import static com.software.modsen.driverservice.util.ExceptionMessages.DRIVER_NOT_EXISTS;
+import static com.software.modsen.driverservice.util.ExceptionMessages.*;
 
 @Service
 @RequiredArgsConstructor
 public class DriverServiceImpl implements DriverService {
-    private final CarServiceImpl carService;
+    private final CarService carService;
     private final DriverRepository driverRepository;
-    private final ModelMapper mapper;
 
     @Override
-    public DriverResponse getById(Long id) {
-        Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new DriverIsNotExistsException(String.format(DRIVER_NOT_EXISTS, id)));
-        return mapper.map(driver, DriverResponse.class);
+    public Driver getById(Long id) {
+        return getOrThrow(id);
     }
 
     @Override
-    public List<DriverResponse> getAll(Integer pageNumber, Integer pageSize, String sortBy) {
-        return driverRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))).getContent()
-                .stream()
-                .map(driver -> mapper.map(driver, DriverResponse.class))
-                .toList();
+    public List<Driver> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted) {
+        if (includeRestricted != null && includeRestricted) {
+            return driverRepository.findAllByRestrictedIsTrue(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy)));
+        } else {
+            return driverRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))).getContent();
+        }
     }
 
     @Override
-    public DriverResponse save(DriverCreateRequest request) {
-        Driver driver = mapper.map(request, Driver.class);
-        driver.setCar(checkCarOccupancy(request.getCar()));
-        return mapper.map(driverRepository.save(driver), DriverResponse.class);
-    }
-
-    @Override
-    public DriverResponse update(DriverUpdateRequest request) {
-        driverRepository.findById(request.getId())
-                .orElseThrow(() -> new DriverIsNotExistsException(String.format(DRIVER_NOT_EXISTS, request.getId())));
-        Driver driver = mapper.map(request, Driver.class);
-        driver.setCar(checkCarOccupancy(request.getCar()));
-        return mapper.map(driverRepository.save(driver), DriverResponse.class);
+    public Driver save(Driver driver) {
+        if(driverRepository.findDriverByEmailAndPhoneNumber(
+                driver.getEmail(),
+                driver.getPhoneNumber()).isPresent()){
+            throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
+        }
+        System.err.println(driver.getCar().getId());
+        driver.setCar(checkCarOccupancy(driver.getCar().getId()));
+        return driverRepository.save(driver);
     }
 
     private Car checkCarOccupancy(Long id) {
-        Car car = mapper.map(carService.getById(id), Car.class);
+        Car car = carService.getById(id);
         if (driverRepository.findDriverByCarId(id).isPresent()) {
-            throw new CarIsOccupiedException(String.format(CAR_OCCUPIED, id));
+            throw new CarOccupiedException(String.format(CAR_OCCUPIED, id));
         }
         return car;
     }
 
     @Override
-    public DriverResponse changeRestrictionsStatus(Long id) {
-        Driver driver = driverRepository.findById(id)
-                .orElseThrow(() -> new DriverIsNotExistsException(String.format(DRIVER_NOT_EXISTS, id)));
+    public Driver update(Driver driver) {
+        getOrThrow(driver.getId());
+        Driver existingDriver = driverRepository.findDriverByEmailAndPhoneNumber(
+                        driver.getEmail(),
+                        driver.getPhoneNumber())
+                .orElse(null);
+        if (existingDriver != null && !existingDriver.getId().equals(driver.getId())) {
+            throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
+        }
+        driver.setCar(checkCarOccupancyForUpdateDriver(driver.getCar().getId(), driver.getId()));
+        return driverRepository.save(driver);
+    }
+
+    private Car checkCarOccupancyForUpdateDriver(Long id, Long driverId) {
+        Car car = carService.getById(id);
+        Driver existingDriver = driverRepository.findDriverByCarId(id)
+                .orElse(null);
+        if (existingDriver != null && !existingDriver.getId().equals(driverId)) {
+            throw new CarOccupiedException(String.format(CAR_OCCUPIED, id));
+        }
+        return car;
+    }
+
+    @Override
+    public Driver changeRestrictionsStatus(Long id) {
+        Driver driver = getOrThrow(id);
         driver.setRestricted(!driver.isRestricted());
-        driverRepository.save(driver);
-        return mapper.map(driver, DriverResponse.class);
+        return driverRepository.save(driver);
+    }
+
+    private Driver getOrThrow(Long id) {
+        return driverRepository.findById(id)
+                .orElseThrow(() -> new DriverNotExistsException(String.format(DRIVER_NOT_EXISTS, id)));
     }
 }

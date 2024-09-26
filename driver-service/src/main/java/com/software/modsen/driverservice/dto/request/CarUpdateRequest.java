@@ -1,25 +1,29 @@
-package com.software.modsen.driverservice.dto;
+package com.software.modsen.driverservice.dto.request;
 
 import com.software.modsen.driverservice.enumeration.Tariff;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import static com.software.modsen.driverservice.util.CustomValidatePatterns.*;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CarCreateRequest {
-    @Pattern(regexp = "^[a-zA-Z]+\\s?-?[a-zA-Z]+$", message = "Incorrect kind")
+public class CarUpdateRequest {
+    private Long id;
+
+    @Pattern(regexp = CAR_KIND_PATTERN, message = "Incorrect kind")
     @Schema(defaultValue = "kind")
     private String kind;
 
-    @Pattern(regexp = "^[a-zA-Z]+-?[a-zA-Z]+$", message = "Incorrect color")
+    @Pattern(regexp = CAR_COLOR_PATTERN, message = "Incorrect color")
     @Schema(defaultValue = "color")
     private String color;
 
-    @Pattern(regexp = "^[a-zA-Z0-9]{4,8}$", message = "Incorrect number")
+    @Pattern(regexp = CAR_NUMBER_PATTERN, message = "Incorrect number")
     @Schema(defaultValue = "number")
     private String number;
 
