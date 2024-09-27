@@ -43,6 +43,9 @@ public class Driver {
     @Column(name = "is_restricted")
     private boolean restricted;
 
+    @Column(name = "is_busy")
+    private boolean busy;
+
     @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DriverRating driverRating;
 }

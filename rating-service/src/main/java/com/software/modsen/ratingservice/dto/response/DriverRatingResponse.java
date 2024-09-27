@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class DriverRatingResponse {
-    private Long driverId;
+    private Long id;
+    private DriverResponse driver;
     private double driverRating;
 }

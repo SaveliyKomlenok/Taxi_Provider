@@ -49,7 +49,7 @@ public class CarController {
         return new ResponseEntity<>(carMapper.toResponse(car), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<CarResponse> changeRestrictionsStatus(@PathVariable Long id){
         Car car = carService.changeRestrictionsStatus(id);
         return new ResponseEntity<>(carMapper.toResponse(car), HttpStatus.OK);

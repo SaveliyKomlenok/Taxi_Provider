@@ -1,11 +1,17 @@
 package com.software.modsen.rideservice.service.impl;
 
+import com.software.modsen.rideservice.dto.request.RatingPassengerRequest;
 import com.software.modsen.rideservice.dto.request.RideCancelRequest;
+import com.software.modsen.rideservice.dto.request.RideFinishRequest;
 import com.software.modsen.rideservice.dto.request.RideStatusChangeRequest;
+import com.software.modsen.rideservice.dto.response.DriverResponse;
 import com.software.modsen.rideservice.entity.Ride;
 import com.software.modsen.rideservice.enumiration.Status;
 import com.software.modsen.rideservice.exception.*;
 import com.software.modsen.rideservice.repository.RideRepository;
+import com.software.modsen.rideservice.service.DriverService;
+import com.software.modsen.rideservice.service.PassengerService;
+import com.software.modsen.rideservice.service.RatingService;
 import com.software.modsen.rideservice.service.RideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +29,9 @@ import static com.software.modsen.rideservice.util.ExceptionMessages.*;
 @RequiredArgsConstructor
 public class RideServiceImpl implements RideService {
     private final RideRepository rideRepository;
+    private final PassengerService passengerService;
+    private final DriverService driverService;
+    private final RatingService ratingService;
 
     @Override
     public Ride getById(Long id) {
@@ -46,25 +55,44 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public Ride create(Ride ride) {
+        checkPassengerRestrict(ride.getPassengerId());
         ride.setStatus(Status.CREATED);
         ride.setStartDateTime(LocalDateTime.now());
         ride.setPrice(BigDecimal.valueOf(Math.random()).setScale(2, RoundingMode.DOWN));
         return rideRepository.save(ride);
     }
 
+    private void checkPassengerRestrict(Long passengerId) {
+        if (passengerService.getPassengerById(passengerId).isRestricted()) {
+            throw new PassengerRestrictedException(PASSENGER_RESTRICTED);
+        }
+    }
+
     @Override
     public Ride accept(RideStatusChangeRequest request) {
+        checkDriverBusyAndRestricted(request.getDriverId());
         Ride ride = rideRepository.findRideByIdAndStatusEquals(
                         request.getRideId(),
                         Status.CREATED)
                 .orElseThrow(() -> new RideAcceptException(String.format(RIDE_NOT_ACCEPTED, request.getRideId())));
         ride.setDriverId(request.getDriverId());
         ride.setStatus(Status.ACCEPTED);
+        driverService.changeBusyStatus(request.getDriverId());
         return rideRepository.save(ride);
     }
 
+    private void checkDriverBusyAndRestricted(Long driverId) {
+        DriverResponse driver = driverService.getDriverById(driverId);
+        if (driver.isRestricted()) {
+            throw new DriverRestrictedException(DRIVER_RESTRICTED);
+        }
+        if (driver.isBusy()) {
+            throw new DriverBusyException(DRIVER_BUSY);
+        }
+    }
+
     @Override
-    public Ride finish(RideStatusChangeRequest request) {
+    public Ride finish(RideFinishRequest request) {
         Ride ride = rideRepository.findRideByIdAndDriverIdAndStatusEquals(
                         request.getRideId(),
                         request.getDriverId(),
@@ -72,7 +100,18 @@ public class RideServiceImpl implements RideService {
                 .orElseThrow(() -> new RideFinishException(String.format(RIDE_NOT_FINISHED, request.getRideId())));
         ride.setStatus(Status.FINISHED);
         ride.setEndDateTime(LocalDateTime.now());
+        driverService.changeBusyStatus(request.getDriverId());
+        requestRateByDriver(request, ride);
         return rideRepository.save(ride);
+    }
+
+    private void requestRateByDriver(RideFinishRequest request, Ride ride) {
+        ratingService.rateByDriver(RatingPassengerRequest.builder()
+                        .rideId(ride.getId())
+                        .driverId(ride.getDriverId())
+                        .passengerId(ride.getPassengerId())
+                        .passengerRating(request.getPassengerRating())
+                .build());
     }
 
     @Override
@@ -83,6 +122,9 @@ public class RideServiceImpl implements RideService {
                         Status.CREATED,
                         Status.ACCEPTED)
                 .orElseThrow(() -> new RideCancelException(String.format(RIDE_NOT_CANCELED, request.getRideId())));
+        if (ride.getStatus().equals(Status.ACCEPTED)) {
+            driverService.changeBusyStatus(ride.getDriverId());
+        }
         ride.setStatus(Status.CANCELED);
         return rideRepository.save(ride);
     }
@@ -105,6 +147,6 @@ public class RideServiceImpl implements RideService {
 
     private Ride getOrThrow(Long id) {
         return rideRepository.findById(id)
-                .orElseThrow(() -> new RideIsNotExistsException(String.format(RIDE_NOT_EXISTS, id)));
+                .orElseThrow(() -> new RideNotExistsException(String.format(RIDE_NOT_EXISTS, id)));
     }
 }

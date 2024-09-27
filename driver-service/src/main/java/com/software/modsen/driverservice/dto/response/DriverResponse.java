@@ -17,4 +17,5 @@ public class DriverResponse {
     private String phoneNumber;
     private String gender;
     private boolean isRestricted;
+    private boolean isBusy;
 }

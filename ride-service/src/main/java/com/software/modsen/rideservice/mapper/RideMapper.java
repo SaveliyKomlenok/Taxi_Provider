@@ -15,15 +15,19 @@ import java.util.List;
 public class RideMapper {
     private final ModelMapper mapper;
 
-    public Ride fromResponseToEntity(RideCreateRequest request){
-        return mapper.map(request, Ride.class);
+    public Ride toEntity(RideCreateRequest request){
+        return Ride.builder()
+                .passengerId(request.getPassengerId())
+                .addressFrom(request.getAddressFrom())
+                .addressTo(request.getAddressTo())
+                .build();
     }
 
-    public RideResponse fromEntityToResponse(Ride ride) {
+    public RideResponse toResponse(Ride ride) {
         return mapper.map(ride, RideResponse.class);
     }
 
-    public RideListResponse fromListEntityToListResponse(List<Ride> rideList) {
+    public RideListResponse toListResponse(List<Ride> rideList) {
         return RideListResponse.builder()
                 .rideResponseList(rideList.stream()
                         .map(ride -> mapper.map(ride, RideResponse.class))
