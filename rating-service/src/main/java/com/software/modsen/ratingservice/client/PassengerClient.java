@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(value = "passenger-service", url = "localhost:8081/api/v1/passenger-ratings")
+@FeignClient(value = "${service.passenger.name}", url = "${service.passenger.rating.url}")
 public interface PassengerClient {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     PassengerRatingResponse savePassengerRating(@RequestBody PassengerRatingRequest request);

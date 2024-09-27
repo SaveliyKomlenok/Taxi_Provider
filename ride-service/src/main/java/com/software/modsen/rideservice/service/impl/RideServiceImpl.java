@@ -23,7 +23,15 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.software.modsen.rideservice.util.ExceptionMessages.*;
+import static com.software.modsen.rideservice.util.ExceptionMessages.DRIVER_BUSY;
+import static com.software.modsen.rideservice.util.ExceptionMessages.DRIVER_RESTRICTED;
+import static com.software.modsen.rideservice.util.ExceptionMessages.INVALID_RIDE_STATUS;
+import static com.software.modsen.rideservice.util.ExceptionMessages.PASSENGER_RESTRICTED;
+import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_ACCEPTED;
+import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_CANCELED;
+import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_EXISTS;
+import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_FINISHED;
+import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_STATUS_NOT_CHANGED;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +72,7 @@ public class RideServiceImpl implements RideService {
 
     private void checkPassengerRestrict(Long passengerId) {
         if (passengerService.getPassengerById(passengerId).isRestricted()) {
-            throw new PassengerRestrictedException(PASSENGER_RESTRICTED);
+            throw new PassengerRestrictedException(String.format(PASSENGER_RESTRICTED, passengerId));
         }
     }
 
@@ -75,8 +83,10 @@ public class RideServiceImpl implements RideService {
                         request.getRideId(),
                         Status.CREATED)
                 .orElseThrow(() -> new RideAcceptException(String.format(RIDE_NOT_ACCEPTED, request.getRideId())));
+
         ride.setDriverId(request.getDriverId());
         ride.setStatus(Status.ACCEPTED);
+
         driverService.changeBusyStatus(request.getDriverId());
         return rideRepository.save(ride);
     }
@@ -84,10 +94,10 @@ public class RideServiceImpl implements RideService {
     private void checkDriverBusyAndRestricted(Long driverId) {
         DriverResponse driver = driverService.getDriverById(driverId);
         if (driver.isRestricted()) {
-            throw new DriverRestrictedException(DRIVER_RESTRICTED);
+            throw new DriverRestrictedException(String.format(DRIVER_RESTRICTED, driverId));
         }
         if (driver.isBusy()) {
-            throw new DriverBusyException(DRIVER_BUSY);
+            throw new DriverBusyException(String.format(DRIVER_BUSY, driverId));
         }
     }
 
@@ -98,8 +108,10 @@ public class RideServiceImpl implements RideService {
                         request.getDriverId(),
                         Status.ON_WAY_TO_DESTINATION)
                 .orElseThrow(() -> new RideFinishException(String.format(RIDE_NOT_FINISHED, request.getRideId())));
+
         ride.setStatus(Status.FINISHED);
         ride.setEndDateTime(LocalDateTime.now());
+
         driverService.changeBusyStatus(request.getDriverId());
         requestRateByDriver(request, ride);
         return rideRepository.save(ride);
@@ -122,6 +134,7 @@ public class RideServiceImpl implements RideService {
                         Status.CREATED,
                         Status.ACCEPTED)
                 .orElseThrow(() -> new RideCancelException(String.format(RIDE_NOT_CANCELED, request.getRideId())));
+
         if (ride.getStatus().equals(Status.ACCEPTED)) {
             driverService.changeBusyStatus(ride.getDriverId());
         }

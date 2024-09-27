@@ -19,6 +19,7 @@ import java.util.List;
 
 import static com.software.modsen.ratingservice.util.ExceptionMessages.DRIVER_HAS_RATING;
 import static com.software.modsen.ratingservice.util.ExceptionMessages.DRIVER_NOT_RATED;
+import static com.software.modsen.ratingservice.util.NumericConstants.MINIMAL_RATING;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +78,7 @@ public class RatingServiceImpl implements RatingService {
         return ratingList.stream()
                 .mapToInt(Rating::getPassengerRating)
                 .average()
-                .orElse(0.0);
+                .orElse(MINIMAL_RATING);
     }
 
     public double calculateDriverRating(Long driverId) {
@@ -85,6 +86,6 @@ public class RatingServiceImpl implements RatingService {
         return ratingList.stream()
                 .mapToInt(Rating::getDriverRating)
                 .average()
-                .orElse(0.0);
+                .orElse(MINIMAL_RATING);
     }
 }
