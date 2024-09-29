@@ -1,6 +1,8 @@
 package com.software.modsen.ratingservice.exceptionhandler;
 
 import com.software.modsen.ratingservice.exception.DriverAlreadyHasRatingException;
+import com.software.modsen.ratingservice.exception.FeignClientException;
+import com.software.modsen.ratingservice.exception.NotFoundException;
 import com.software.modsen.ratingservice.exception.RatingDriverException;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
@@ -17,10 +19,18 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler({DriverAlreadyHasRatingException.class,
-            RatingDriverException.class})
+            RatingDriverException.class,
+            FeignClientException.class})
     public ResponseEntity<ErrorMessage> handleErrors(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(exception.getMessage()));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleNotFoundErrors(RuntimeException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(exception.getMessage()));
     }
 

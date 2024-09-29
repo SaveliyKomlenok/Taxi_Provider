@@ -2,6 +2,8 @@ package com.software.modsen.rideservice.exceptionhandler;
 
 import com.software.modsen.rideservice.exception.DriverBusyException;
 import com.software.modsen.rideservice.exception.DriverRestrictedException;
+import com.software.modsen.rideservice.exception.FeignClientException;
+import com.software.modsen.rideservice.exception.NotFoundException;
 import com.software.modsen.rideservice.exception.PassengerRestrictedException;
 import com.software.modsen.rideservice.exception.RideAcceptException;
 import com.software.modsen.rideservice.exception.RideCancelException;
@@ -24,7 +26,8 @@ import java.util.stream.Collectors;
 public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler({RideNotExistsException.class,
             DriverBusyException.class,
-            DriverRestrictedException.class})
+            DriverRestrictedException.class,
+            FeignClientException.class})
     public ResponseEntity<ErrorMessage> handleBadRequestErrors(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -39,6 +42,13 @@ public class ExceptionHandlerControllerAdvice {
     public ResponseEntity<ErrorMessage> handleConflictErrors(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(new ErrorMessage(exception.getMessage()));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleNotFoundErrors(RuntimeException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(exception.getMessage()));
     }
 
