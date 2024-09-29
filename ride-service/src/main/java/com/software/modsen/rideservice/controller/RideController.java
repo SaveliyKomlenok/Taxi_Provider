@@ -2,6 +2,7 @@ package com.software.modsen.rideservice.controller;
 
 import com.software.modsen.rideservice.dto.request.RideCancelRequest;
 import com.software.modsen.rideservice.dto.request.RideCreateRequest;
+import com.software.modsen.rideservice.dto.request.RideFinishRequest;
 import com.software.modsen.rideservice.dto.request.RideStatusChangeRequest;
 import com.software.modsen.rideservice.dto.response.RideListResponse;
 import com.software.modsen.rideservice.dto.response.RideResponse;
@@ -26,7 +27,7 @@ public class RideController {
     @GetMapping("/{id}")
     public ResponseEntity<RideResponse> getById(@PathVariable Long id) {
         Ride ride = rideService.getById(id);
-        return new ResponseEntity<>(rideMapper.fromEntityToResponse(ride), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 
     @GetMapping
@@ -34,48 +35,48 @@ public class RideController {
                                                    @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                    @RequestParam(required = false, defaultValue = "id") String sortBy){
         List<Ride> rideList = rideService.getAll(pageNumber, pageSize, sortBy);
-        return new ResponseEntity<>(rideMapper.fromListEntityToListResponse(rideList), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toListResponse(rideList), HttpStatus.OK);
     }
 
     @GetMapping("/passenger/{id}")
     public ResponseEntity<RideListResponse> getRidesByPassengerId(@PathVariable Long id) {
         List<Ride> rideList = rideService.getAllByPassengerId(id);
-        return new ResponseEntity<>(rideMapper.fromListEntityToListResponse(rideList), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toListResponse(rideList), HttpStatus.OK);
     }
 
     @GetMapping("/driver/{id}")
     public ResponseEntity<RideListResponse> getRidesByDriverId(@PathVariable Long id) {
         List<Ride> rideList = rideService.getAllByDriverId(id);
-        return new ResponseEntity<>(rideMapper.fromListEntityToListResponse(rideList), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toListResponse(rideList), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<RideResponse> create(@RequestBody @Valid RideCreateRequest request) {
-        Ride ride = rideService.create(rideMapper.fromResponseToEntity(request));
-        return new ResponseEntity<>(rideMapper.fromEntityToResponse(ride), HttpStatus.CREATED);
+        Ride ride = rideService.create(rideMapper.toEntity(request));
+        return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.CREATED);
     }
 
     @PatchMapping("/accept")
     public ResponseEntity<RideResponse> accept(@RequestBody @Valid RideStatusChangeRequest request) {
         Ride ride = rideService.accept(request);
-        return new ResponseEntity<>(rideMapper.fromEntityToResponse(ride), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 
     @PatchMapping("/finish")
-    public ResponseEntity<RideResponse> finish(@RequestBody @Valid RideStatusChangeRequest request) {
+    public ResponseEntity<RideResponse> finish(@RequestBody @Valid RideFinishRequest request) {
         Ride ride = rideService.finish(request);
-        return new ResponseEntity<>(rideMapper.fromEntityToResponse(ride), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 
     @PatchMapping("/cancel")
     public ResponseEntity<RideResponse> cancel(@RequestBody @Valid RideCancelRequest request) {
         Ride ride = rideService.cancel(request);
-        return new ResponseEntity<>(rideMapper.fromEntityToResponse(ride), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 
     @PatchMapping("/change-status")
     public ResponseEntity<RideResponse> changeStatus(@RequestBody @Valid RideStatusChangeRequest request) {
         Ride ride = rideService.changeStatus(request);
-        return new ResponseEntity<>(rideMapper.fromEntityToResponse(ride), HttpStatus.OK);
+        return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 }

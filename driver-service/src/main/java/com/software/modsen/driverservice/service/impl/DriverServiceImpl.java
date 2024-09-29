@@ -88,6 +88,13 @@ public class DriverServiceImpl implements DriverService {
         return driverRepository.save(driver);
     }
 
+    @Override
+    public Driver changeBusyStatus(Long id) {
+        Driver driver = getOrThrow(id);
+        driver.setBusy(!driver.isBusy());
+        return driverRepository.save(driver);
+    }
+
     private Driver getOrThrow(Long id) {
         return driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotExistsException(String.format(DRIVER_NOT_EXISTS, id)));

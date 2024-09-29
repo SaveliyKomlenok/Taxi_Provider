@@ -2,8 +2,6 @@ package com.software.modsen.ratingservice.controller;
 
 import com.software.modsen.ratingservice.dto.request.RatingDriverRequest;
 import com.software.modsen.ratingservice.dto.request.RatingPassengerRequest;
-import com.software.modsen.ratingservice.dto.response.DriverRatingResponse;
-import com.software.modsen.ratingservice.dto.response.PassengerRatingResponse;
 import com.software.modsen.ratingservice.dto.response.RatingListResponse;
 import com.software.modsen.ratingservice.dto.response.RatingResponse;
 import com.software.modsen.ratingservice.entity.Rating;
@@ -35,19 +33,9 @@ public class RatingController {
         return new ResponseEntity<>(ratingMapper.fromEntityToResponse(rating), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/driver")
+    @PutMapping("/driver")
     public ResponseEntity<RatingResponse> ratedDriver(@RequestBody @Valid RatingDriverRequest request) {
         Rating rating = ratingService.ratingDriver(request);
         return new ResponseEntity<>(ratingMapper.fromEntityToResponse(rating), HttpStatus.OK);
-    }
-
-    @GetMapping("/passenger/{id}")
-    public ResponseEntity<PassengerRatingResponse> getPassengerRating(@PathVariable Long id){
-        return new ResponseEntity<>(ratingService.calculatePassengerRating(id), HttpStatus.OK);
-    }
-
-    @GetMapping("/driver/{id}")
-    public ResponseEntity<DriverRatingResponse> getDriverRating(@PathVariable Long id){
-        return new ResponseEntity<>(ratingService.calculateDriverRating(id), HttpStatus.OK);
     }
 }

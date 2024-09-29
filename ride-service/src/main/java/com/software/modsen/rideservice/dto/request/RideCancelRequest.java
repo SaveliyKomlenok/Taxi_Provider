@@ -1,7 +1,10 @@
 package com.software.modsen.rideservice.dto.request;
 
-import jakarta.validation.constraints.Min;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -9,8 +12,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class RideCancelRequest {
-    @Min(1)
     private Long passengerId;
-    @Min(1)
     private Long rideId;
 }

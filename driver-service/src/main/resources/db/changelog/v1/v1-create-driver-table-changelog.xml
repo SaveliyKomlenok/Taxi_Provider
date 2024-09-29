@@ -27,6 +27,7 @@
             <column name="phone_number" type="varchar"/>
             <column name="gender" type="varchar"/>
             <column name="is_restricted" type="boolean"/>
+            <column name="is_busy" type="boolean"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

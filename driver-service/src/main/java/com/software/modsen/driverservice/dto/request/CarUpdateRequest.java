@@ -3,7 +3,11 @@ package com.software.modsen.driverservice.dto.request;
 import com.software.modsen.driverservice.enumeration.Tariff;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import static com.software.modsen.driverservice.util.CustomValidatePatterns.*;
 

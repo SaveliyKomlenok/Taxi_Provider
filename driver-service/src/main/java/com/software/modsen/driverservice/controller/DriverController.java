@@ -49,9 +49,15 @@ public class DriverController {
         return new ResponseEntity<>(driverMapper.toResponse(driver), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/restrict/{id}")
     public ResponseEntity<DriverResponse> changeRestrictionsStatus(@PathVariable Long id){
         Driver driver = driverService.changeRestrictionsStatus(id);
+        return new ResponseEntity<>(driverMapper.toResponse(driver), HttpStatus.OK);
+    }
+
+    @PutMapping("/busy/{id}")
+    public ResponseEntity<DriverResponse> changeBusyStatus(@PathVariable Long id){
+        Driver driver = driverService.changeBusyStatus(id);
         return new ResponseEntity<>(driverMapper.toResponse(driver), HttpStatus.OK);
     }
 }

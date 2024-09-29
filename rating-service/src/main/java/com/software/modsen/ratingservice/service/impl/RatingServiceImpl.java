@@ -1,29 +1,32 @@
 package com.software.modsen.ratingservice.service.impl;
 
-import com.software.modsen.ratingservice.dto.response.DriverRatingResponse;
-import com.software.modsen.ratingservice.dto.response.PassengerRatingResponse;
+import com.software.modsen.ratingservice.dto.request.DriverRatingRequest;
+import com.software.modsen.ratingservice.dto.request.PassengerRatingRequest;
 import com.software.modsen.ratingservice.dto.request.RatingDriverRequest;
 import com.software.modsen.ratingservice.entity.Rating;
-import com.software.modsen.ratingservice.exception.NotFoundDriverRatingException;
-import com.software.modsen.ratingservice.exception.NotFoundPassengerRatingException;
+import com.software.modsen.ratingservice.exception.DriverAlreadyHasRatingException;
 import com.software.modsen.ratingservice.exception.RatingDriverException;
 import com.software.modsen.ratingservice.repository.RatingRepository;
+import com.software.modsen.ratingservice.service.DriverRatingService;
+import com.software.modsen.ratingservice.service.PassengerRatingService;
 import com.software.modsen.ratingservice.service.RatingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
-import static com.software.modsen.ratingservice.util.ExceptionMessages.*;
+import static com.software.modsen.ratingservice.util.ExceptionMessages.DRIVER_HAS_RATING;
+import static com.software.modsen.ratingservice.util.ExceptionMessages.DRIVER_NOT_RATED;
+import static com.software.modsen.ratingservice.util.NumericConstants.MINIMAL_RATING;
 
 @Service
 @RequiredArgsConstructor
 public class RatingServiceImpl implements RatingService {
     private final RatingRepository ratingRepository;
+    private final PassengerRatingService passengerRatingService;
+    private final DriverRatingService driverRatingService;
 
     @Override
     public List<Rating> getAll(Integer pageNumber, Integer pageSize, String sortBy) {
@@ -32,50 +35,57 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     public Rating ratingPassenger(Rating rating) {
-        return ratingRepository.save(rating);
+        Rating newRating = ratingRepository.save(rating);
+        requestSavePassengerRating(newRating);
+        return newRating;
+    }
+
+    private void requestSavePassengerRating(Rating rating) {
+        double passengerRating = calculatePassengerRating(rating.getPassengerId());
+        passengerRatingService.savePassengerRating(PassengerRatingRequest.builder()
+                .passengerId(rating.getPassengerId())
+                .passengerRating(passengerRating)
+                .build());
     }
 
     @Override
     public Rating ratingDriver(RatingDriverRequest request) {
         Rating rating = ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
-                request.getRideId(),
-                request.getDriverId(),
-                request.getPassengerId())
+                        request.getRideId(),
+                        request.getDriverId(),
+                        request.getPassengerId())
                 .orElseThrow(() -> new RatingDriverException(String.format(DRIVER_NOT_RATED, request.getDriverId())));
+        if (rating.getDriverRating() != null) {
+            throw new DriverAlreadyHasRatingException(String.format(DRIVER_HAS_RATING, rating.getDriverId()));
+        }
         rating.setDriverRating(request.getDriverRating());
         rating.setComment(request.getComment());
-        return ratingRepository.save(rating);
+        Rating newRating = ratingRepository.save(rating);
+        requestSaveDriverRating(newRating);
+        return newRating;
     }
 
-    @Override
-    public PassengerRatingResponse calculatePassengerRating(Long passengerId) {
-        List<Rating> ratingList = ratingRepository.findRatingsByPassengerId(passengerId);
-        if (ratingList.isEmpty()) {
-            throw new NotFoundPassengerRatingException(String.format(NOT_FOUND_PASSENGER_RATING, passengerId));
-        }
-        double passengerRating = ratingList.stream()
+    private void requestSaveDriverRating(Rating rating) {
+        double driverRating = calculateDriverRating(rating.getDriverId());
+        driverRatingService.saveDriverRating(DriverRatingRequest.builder()
+                .driverId(rating.getDriverId())
+                .driverRating(driverRating)
+                .build());
+    }
+
+    public double calculatePassengerRating(Long passengerId) {
+        List<Rating> ratingList = ratingRepository.findRatingsByPassengerIdAndPassengerRatingNotNull(passengerId);
+        return ratingList.stream()
                 .mapToInt(Rating::getPassengerRating)
                 .average()
-                .orElse(0.0);
-        return PassengerRatingResponse.builder()
-                .passengerId(passengerId)
-                .passengerRating(passengerRating)
-                .build();
+                .orElse(MINIMAL_RATING);
     }
 
-    @Override
-    public DriverRatingResponse calculateDriverRating(Long driverId) {
+    public double calculateDriverRating(Long driverId) {
         List<Rating> ratingList = ratingRepository.findRatingsByDriverIdAndDriverRatingNotNull(driverId);
-        if (ratingList.isEmpty()) {
-            throw new NotFoundDriverRatingException(String.format(NOT_FOUND_DRIVER_RATING, driverId));
-        }
-        double driverRating = ratingList.stream()
+        return ratingList.stream()
                 .mapToInt(Rating::getDriverRating)
                 .average()
-                .orElse(0.0);
-        return DriverRatingResponse.builder()
-                .driverId(driverId)
-                .driverRating(BigDecimal.valueOf(driverRating).setScale(2, RoundingMode.HALF_UP).doubleValue())
-                .build();
+                .orElse(MINIMAL_RATING);
     }
 }

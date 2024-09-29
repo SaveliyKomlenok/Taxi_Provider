@@ -4,7 +4,11 @@ import com.software.modsen.driverservice.enumeration.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import static com.software.modsen.driverservice.util.CustomValidatePatterns.NAME_PATTERN;
 import static com.software.modsen.driverservice.util.CustomValidatePatterns.PHONE_NUMBER_PATTERN;

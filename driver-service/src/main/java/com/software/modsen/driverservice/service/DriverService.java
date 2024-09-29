@@ -14,4 +14,6 @@ public interface DriverService {
     Driver update(Driver request);
 
     Driver changeRestrictionsStatus(Long id);
+
+    Driver changeBusyStatus(Long id);
 }

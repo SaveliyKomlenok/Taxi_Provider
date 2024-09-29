@@ -1,6 +1,10 @@
 package com.software.modsen.driverservice.dto.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -17,4 +21,5 @@ public class DriverResponse {
     private String phoneNumber;
     private String gender;
     private boolean isRestricted;
+    private boolean isBusy;
 }
