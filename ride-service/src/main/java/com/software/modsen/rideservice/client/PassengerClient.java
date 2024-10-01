@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(value = "${service.passenger.name}", url = "${service.passenger.url}", configuration = FeignConfig.class)
+@FeignClient(value = "${service.passenger.name}", path = "${service.passenger.url}", configuration = FeignConfig.class)
 public interface PassengerClient {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}", produces = "application/json")
     PassengerResponse getPassengerById(@PathVariable Long id);
