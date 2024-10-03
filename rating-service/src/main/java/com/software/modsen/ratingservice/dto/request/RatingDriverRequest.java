@@ -1,6 +1,5 @@
 package com.software.modsen.ratingservice.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +18,5 @@ public class RatingDriverRequest {
     private Long passengerId;
     @Range(min = 0, max = 5, message = "Incorrect rating")
     private Integer driverRating;
-    @NotBlank(message = "Incorrect comment")
     private String comment;
 }
