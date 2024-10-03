@@ -26,7 +26,7 @@ public class PassengerController {
     public ResponseEntity<PassengerListResponse> getAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                         @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                         @RequestParam(required = false, defaultValue = "id") String sortBy,
-                                                        @RequestParam(required = false, defaultValue = "id") Boolean isRestricted) {
+                                                        @RequestParam(required = false) Boolean isRestricted) {
         List<Passenger> passengerList = passengerService.getAll(pageNumber, pageSize, sortBy, isRestricted);
         return new ResponseEntity<>(passengerMapper.toListResponse(passengerList), HttpStatus.OK);
     }
@@ -49,7 +49,7 @@ public class PassengerController {
         return new ResponseEntity<>(passengerMapper.toResponse(passenger), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<PassengerResponse> changeRestrictionsStatus(@PathVariable Long id){
         Passenger passenger = passengerService.changeRestrictionsStatus(id);
         return new ResponseEntity<>(passengerMapper.toResponse(passenger), HttpStatus.OK);

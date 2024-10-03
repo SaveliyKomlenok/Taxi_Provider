@@ -66,7 +66,7 @@ public class RideServiceImpl implements RideService {
         checkPassengerRestrict(ride.getPassengerId());
         ride.setStatus(Status.CREATED);
         ride.setStartDateTime(LocalDateTime.now());
-        ride.setPrice(BigDecimal.valueOf(Math.random()).setScale(2, RoundingMode.DOWN));
+        ride.setPrice(BigDecimal.valueOf(Math.random() * 10).setScale(2, RoundingMode.DOWN));
         return rideRepository.save(ride);
     }
 
