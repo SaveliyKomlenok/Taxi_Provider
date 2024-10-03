@@ -10,6 +10,7 @@ import com.software.modsen.rideservice.exception.RideCancelException;
 import com.software.modsen.rideservice.exception.RideChangeStatusException;
 import com.software.modsen.rideservice.exception.RideFinishException;
 import com.software.modsen.rideservice.exception.RideNotExistsException;
+import com.software.modsen.rideservice.exception.ServiceNotAvailableException;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,13 @@ public class ExceptionHandlerControllerAdvice {
     public ResponseEntity<ErrorMessage> handleNotFoundErrors(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessage(exception.getMessage()));
+    }
+
+    @ExceptionHandler(ServiceNotAvailableException.class)
+    public ResponseEntity<ErrorMessage> handleServiceUnavailableErrors(RuntimeException exception) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(new ErrorMessage(exception.getMessage()));
     }
 

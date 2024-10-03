@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: ride-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taxi_provider_db
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/main-changelog.xml
+    enabled: true
+
+server:
+  port: 8083
+  forward-headers-strategy: framework
+
+service:
+  passenger:
+    name: passenger-service
+    url: /api/v1/passengers
+  driver:
+    name: driver-service
+    url: /api/v1/drivers
+  rating:
+    name: rating-service
+    url: /api/v1/ratings
+
+resilience4j:
+  retry:
+    instances:
+      passengerById:
+        max-attempts: 5
+        wait-duration: 5000
+      driverById:
+        max-attempts: 5
+        wait-duration: 5000
+      driverChangeStatus:
+        max-attempts: 5
+        wait-duration: 5000
+      rateByDriver:
+        max-attempts: 5
+        wait-duration: 5000
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState:
+          seconds: 3
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
