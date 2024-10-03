@@ -13,4 +13,7 @@ public class ExceptionMessages {
     public static final String PASSENGER_RESTRICTED = "Passenger with id %d is restricted";
     public static final String DRIVER_BUSY = "Driver with id %d is busy with another ride";
     public static final String DRIVER_RESTRICTED = "Driver with id %d is restricted";
+    public static final String PASSENGER_SERVICE_NOT_AVAILABLE = "Passenger service is not available";
+    public static final String DRIVER_SERVICE_NOT_AVAILABLE = "Driver service is not available";
+    public static final String RATING_SERVICE_NOT_AVAILABLE = "Rating service is not available";
 }
