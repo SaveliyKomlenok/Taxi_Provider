@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(value = "${service.driver.name}", url = "${service.driver.rating.url}", configuration = FeignConfig.class)
+@FeignClient(value = "${service.driver.name}", path = "${service.driver.rating.url}", configuration = FeignConfig.class)
 public interface DriverClient {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     DriverRatingResponse saveDriverRating(@RequestBody DriverRatingRequest request);

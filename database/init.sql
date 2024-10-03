@@ -1,0 +1,4 @@
+CREATE DATABASE passengers;
+CREATE DATABASE drivers;
+CREATE DATABASE rides;
+CREATE DATABASE ratings;
