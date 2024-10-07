@@ -17,6 +17,7 @@ import static com.software.modsen.passengerservice.util.CustomValidatePatterns.P
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "Data for update passenger")
 public class PassengerUpdateRequest {
     private Long id;
 
