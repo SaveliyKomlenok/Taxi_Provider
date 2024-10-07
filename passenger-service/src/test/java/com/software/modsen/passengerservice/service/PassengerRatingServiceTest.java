@@ -5,6 +5,7 @@ import com.software.modsen.passengerservice.entity.PassengerRating;
 import com.software.modsen.passengerservice.exception.PassengerRatingNotExistsException;
 import com.software.modsen.passengerservice.repository.PassengerRatingRepository;
 import com.software.modsen.passengerservice.service.impl.PassengerRatingServiceImpl;
+import com.software.modsen.passengerservice.util.TestEntities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,6 +15,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static com.software.modsen.passengerservice.util.ExceptionMessages.RATING_NOT_EXISTS;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_ID;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_RATING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,22 +41,16 @@ public class PassengerRatingServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        passenger = Passenger.builder()
-                .id(1L)
-                .build();
-
-        passengerRating = PassengerRating.builder()
-                .passenger(passenger)
-                .rating(5)
-                .build();
+        passenger = TestEntities.getTestPassenger();
+        passengerRating = TestEntities.getTestPassengerRating();
     }
 
     @Test
     public void testGetByPassengerIdExists() {
-        when(passengerRatingRepository.findPassengerRatingByPassengerId(passenger.getId()))
+        when(passengerRatingRepository.findPassengerRatingByPassengerId(PASSENGER_ID))
                 .thenReturn(Optional.of(passengerRating));
 
-        PassengerRating result = passengerRatingService.getByPassengerId(passenger.getId());
+        PassengerRating result = passengerRatingService.getByPassengerId(PASSENGER_ID);
 
         assertNotNull(result);
         assertEquals(passenger.getId(), result.getPassenger().getId());
@@ -61,13 +58,13 @@ public class PassengerRatingServiceTest {
 
     @Test
     public void testGetByPassengerIdNotExists() {
-        when(passengerRatingRepository.findPassengerRatingByPassengerId(passenger.getId()))
+        when(passengerRatingRepository.findPassengerRatingByPassengerId(PASSENGER_ID))
                 .thenReturn(Optional.empty());
 
         Exception exception = assertThrows(PassengerRatingNotExistsException.class,
-                () -> passengerRatingService.getByPassengerId(passenger.getId()));
+                () -> passengerRatingService.getByPassengerId(PASSENGER_ID));
 
-        String expectedMessage = String.format(RATING_NOT_EXISTS, passenger.getId());
+        String expectedMessage = String.format(RATING_NOT_EXISTS, PASSENGER_ID);
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
@@ -75,31 +72,31 @@ public class PassengerRatingServiceTest {
 
     @Test
     public void testSaveNewPassengerRating() {
-        when(passengerRatingRepository.findPassengerRatingByPassengerId(passenger.getId()))
+        when(passengerRatingRepository.findPassengerRatingByPassengerId(PASSENGER_ID))
                 .thenReturn(Optional.empty());
-        when(passengerService.getById(passenger.getId())).thenReturn(passenger);
+        when(passengerService.getById(PASSENGER_ID)).thenReturn(passenger);
         when(passengerRatingRepository.save(any(PassengerRating.class))).thenReturn(passengerRating);
 
         PassengerRating savedRating = passengerRatingService.save(passengerRating);
 
         assertNotNull(savedRating);
         assertEquals(passenger, savedRating.getPassenger());
-        assertEquals(5, savedRating.getRating());
+        assertEquals(PASSENGER_RATING, savedRating.getRating());
         verify(passengerRatingRepository).save(any(PassengerRating.class));
     }
 
     @Test
     public void testSaveExistingPassengerRating() {
-        when(passengerRatingRepository.findPassengerRatingByPassengerId(passenger.getId()))
+        when(passengerRatingRepository.findPassengerRatingByPassengerId(PASSENGER_ID))
                 .thenReturn(Optional.of(passengerRating));
-        when(passengerService.getById(passenger.getId())).thenReturn(passenger);
+        when(passengerService.getById(PASSENGER_ID)).thenReturn(passenger);
         when(passengerRatingRepository.save(passengerRating)).thenReturn(passengerRating);
 
         PassengerRating savedRating = passengerRatingService.save(passengerRating);
 
         assertNotNull(savedRating);
-        assertEquals(passenger.getId(), savedRating.getPassenger().getId());
-        assertEquals(5, savedRating.getRating());
+        assertEquals(PASSENGER_ID, savedRating.getPassenger().getId());
+        assertEquals(PASSENGER_RATING, savedRating.getRating());
         verify(passengerRatingRepository).save(passengerRating);
     }
 }

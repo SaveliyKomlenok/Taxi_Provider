@@ -6,6 +6,7 @@ import com.software.modsen.passengerservice.entity.Passenger;
 import com.software.modsen.passengerservice.entity.PassengerRating;
 import com.software.modsen.passengerservice.repository.PassengerRatingRepository;
 import com.software.modsen.passengerservice.repository.PassengerRepository;
+import com.software.modsen.passengerservice.util.TestEntities;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.List;
 
+import static com.software.modsen.passengerservice.util.TestEntities.EXPECTED_LIST_SIZE;
+import static com.software.modsen.passengerservice.util.TestEntities.FIRST_INDEX;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_EMAIL;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_RATING;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_RATING_BASE_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,6 +43,7 @@ public class PassengerRatingControllerTest {
 
     @Autowired
     private PassengerRepository passengerRepository;
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     public static void setUpPostgresDB() {
@@ -51,8 +58,6 @@ public class PassengerRatingControllerTest {
         System.setProperty("spring.datasource.password", postgreSQLContainer.getPassword());
     }
 
-    private ObjectMapper objectMapper;
-
     @BeforeEach
     public void setUp() {
         objectMapper = new ObjectMapper();
@@ -62,53 +67,37 @@ public class PassengerRatingControllerTest {
     @Test
     @SneakyThrows
     public void testGetPassengerRatingById() {
-        Passenger passenger = Passenger.builder()
-                .firstname("Джон")
-                .surname("Уильям")
-                .patronymic("Смит")
-                .email("john@example.com")
-                .phoneNumber("+375293456789")
-                .build();
+        Passenger passenger = TestEntities.getPassengerForIT();
         passengerRepository.save(passenger);
-        PassengerRating passengerRating = PassengerRating.builder()
-                .passenger(passenger)
-                .rating(4.55)
-                .build();
+
+        PassengerRating passengerRating = TestEntities.getPassengerRatingForIT();
+        passengerRating.setPassenger(passenger);
         passengerRatingRepository.save(passengerRating);
 
-        mockMvc.perform(get("/api/v1/passenger-ratings/{id}", passengerRating.getId()))
+        mockMvc.perform(get(PASSENGER_RATING_BASE_URL + "/{id}", passengerRating.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.passengerRating").value(4.55));
+                .andExpect(jsonPath("$.passengerRating").value(PASSENGER_RATING));
     }
 
     @Test
     @SneakyThrows
     public void testSavePassengerRating() {
-        Passenger passenger = Passenger.builder()
-                .firstname("Джон")
-                .surname("Уильям")
-                .patronymic("Смит")
-                .email("john@example.com")
-                .phoneNumber("+375293456789")
-                .build();
+        Passenger passenger = TestEntities.getPassengerForIT();
         passengerRepository.save(passenger);
 
-        PassengerRatingRequest request = PassengerRatingRequest.builder()
-                .passengerId(1L)
-                .passengerRating(4.55)
-                .build();
+        PassengerRatingRequest request = TestEntities.getPassengerRatingRequestForIT();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/v1/passenger-ratings")
+        mockMvc.perform(post(PASSENGER_RATING_BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         List<PassengerRating> passengerRatingList = passengerRatingRepository.findAll();
-        assertThat(passengerRatingList).hasSize(1);
-        assertThat(passengerRatingList.get(0).getRating()).isEqualTo(4.55);
-        assertThat(passengerRatingList.get(0).getPassenger().getEmail()).isEqualTo("john@example.com");
+        assertThat(passengerRatingList).hasSize(EXPECTED_LIST_SIZE);
+        assertThat(passengerRatingList.get(FIRST_INDEX).getRating()).isEqualTo(PASSENGER_RATING);
+        assertThat(passengerRatingList.get(FIRST_INDEX).getPassenger().getEmail()).isEqualTo(PASSENGER_EMAIL);
     }
 }

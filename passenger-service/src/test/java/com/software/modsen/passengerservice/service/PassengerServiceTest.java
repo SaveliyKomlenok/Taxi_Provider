@@ -5,6 +5,7 @@ import com.software.modsen.passengerservice.exception.PassengerAlreadyExistsExce
 import com.software.modsen.passengerservice.exception.PassengerNotExistsException;
 import com.software.modsen.passengerservice.repository.PassengerRepository;
 import com.software.modsen.passengerservice.service.impl.PassengerServiceImpl;
+import com.software.modsen.passengerservice.util.TestEntities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,10 +20,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.software.modsen.passengerservice.util.TestEntities.EXPECTED_LIST_SIZE;
+import static com.software.modsen.passengerservice.util.TestEntities.FIRST_INDEX;
+import static com.software.modsen.passengerservice.util.TestEntities.PAGE_NUMBER;
+import static com.software.modsen.passengerservice.util.TestEntities.PAGE_SIZE;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_EMAIL;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_ID;
+import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_PHONE_NUMBER;
+import static com.software.modsen.passengerservice.util.TestEntities.SORT_BY_ID;
+import static com.software.modsen.passengerservice.util.TestEntities.WANTED_NUMBER_OF_INVOCATIONS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,46 +50,42 @@ public class PassengerServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        passenger = Passenger.builder()
-                .id(1L)
-                .email("test@example.com")
-                .phoneNumber("+375331234567")
-                .build();
+        passenger = TestEntities.getTestPassenger();
     }
 
     @Test
     void getById_ShouldReturnPassenger_WhenExists() {
-        when(passengerRepository.findById(1L)).thenReturn(Optional.of(passenger));
+        when(passengerRepository.findById(PASSENGER_ID)).thenReturn(Optional.of(passenger));
 
-        Passenger result = passengerService.getById(1L);
+        Passenger result = passengerService.getById(PASSENGER_ID);
 
         assertEquals(passenger, result);
-        verify(passengerRepository).findById(1L);
+        verify(passengerRepository).findById(PASSENGER_ID);
     }
 
     @Test
     void getById_ShouldThrowException_WhenNotExists() {
-        when(passengerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(passengerRepository.findById(PASSENGER_ID)).thenReturn(Optional.empty());
 
-        assertThrows(PassengerNotExistsException.class, () -> passengerService.getById(1L));
-        verify(passengerRepository).findById(1L);
+        assertThrows(PassengerNotExistsException.class, () -> passengerService.getById(PASSENGER_ID));
+        verify(passengerRepository).findById(PASSENGER_ID);
     }
 
     @Test
     void getAll_ShouldReturnAllPassengers_WhenIncludeRestrictedIsFalse() {
-        when(passengerRepository.findAll(PageRequest.of(0, 10, Sort.by("id"))))
+        when(passengerRepository.findAll(PageRequest.of(PAGE_NUMBER, PAGE_SIZE, Sort.by(SORT_BY_ID))))
                 .thenReturn(new PageImpl<>(Collections.singletonList(passenger)));
 
-        List<Passenger> result = passengerService.getAll(0, 10, "id", false);
+        List<Passenger> result = passengerService.getAll(PAGE_NUMBER, PAGE_SIZE, SORT_BY_ID, false);
 
-        assertEquals(1, result.size());
-        assertEquals(passenger, result.get(0));
+        assertEquals(EXPECTED_LIST_SIZE, result.size());
+        assertEquals(passenger, result.get(FIRST_INDEX));
         verify(passengerRepository).findAll(any(Pageable.class));
     }
 
     @Test
     void save_ShouldReturnPassenger_WhenSavedSuccessfully() {
-        when(passengerRepository.findPassengerByEmailAndPhoneNumber("test@example.com", "+375331234567"))
+        when(passengerRepository.findPassengerByEmailAndPhoneNumber(PASSENGER_EMAIL, PASSENGER_PHONE_NUMBER))
                 .thenReturn(Optional.empty());
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
@@ -89,7 +97,7 @@ public class PassengerServiceTest {
 
     @Test
     void save_ShouldThrowException_WhenPassengerAlreadyExists() {
-        when(passengerRepository.findPassengerByEmailAndPhoneNumber("test@example.com", "+375331234567"))
+        when(passengerRepository.findPassengerByEmailAndPhoneNumber(PASSENGER_EMAIL, PASSENGER_PHONE_NUMBER))
                 .thenReturn(Optional.of(passenger));
 
         assertThrows(PassengerAlreadyExistsException.class, () -> passengerService.save(passenger));
@@ -98,8 +106,8 @@ public class PassengerServiceTest {
 
     @Test
     void update_ShouldReturnUpdatedPassenger_WhenUpdateIsSuccessful() {
-        when(passengerRepository.findById(1L)).thenReturn(Optional.of(passenger));
-        when(passengerRepository.findPassengerByEmailAndPhoneNumber("test@example.com", "+375331234567"))
+        when(passengerRepository.findById(PASSENGER_ID)).thenReturn(Optional.of(passenger));
+        when(passengerRepository.findPassengerByEmailAndPhoneNumber(PASSENGER_EMAIL, PASSENGER_PHONE_NUMBER))
                 .thenReturn(Optional.empty());
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
@@ -111,16 +119,31 @@ public class PassengerServiceTest {
 
     @Test
     void update_ShouldThrowException_WhenPassengerAlreadyExists() {
-        Passenger tempPassenger = Passenger.builder()
-                .id(2L)
-                .email("test@example.com")
-                .phoneNumber("+375331234567")
-                .build();
-        when(passengerRepository.findById(1L)).thenReturn(Optional.of(passenger));
-        when(passengerRepository.findPassengerByEmailAndPhoneNumber("test@example.com", "+375331234567"))
-                .thenReturn(Optional.of(tempPassenger));
+        Passenger secondPassenger = TestEntities.getSecondTestPassenger();
+        when(passengerRepository.findById(PASSENGER_ID)).thenReturn(Optional.of(passenger));
+        when(passengerRepository.findPassengerByEmailAndPhoneNumber(PASSENGER_EMAIL, PASSENGER_PHONE_NUMBER))
+                .thenReturn(Optional.of(secondPassenger));
 
         assertThrows(PassengerAlreadyExistsException.class, () -> passengerService.update(passenger));
+        verify(passengerRepository, never()).save(any());
+    }
+
+    @Test
+    void changeRestrictionsStatus_ShouldChangeStatus_WhenPassengerExists() {
+        when(passengerRepository.findById(PASSENGER_ID)).thenReturn(Optional.of(passenger));
+        when(passengerRepository.save(passenger)).thenReturn(passenger);
+
+        Passenger updatedPassenger = passengerService.changeRestrictionsStatus(PASSENGER_ID);
+
+        assertTrue(updatedPassenger.isRestricted());
+        verify(passengerRepository, times(WANTED_NUMBER_OF_INVOCATIONS)).save(passenger);
+    }
+
+    @Test
+    void changeRestrictionsStatus_ShouldThrowException_WhenPassengerDoesNotExist() {
+        when(passengerRepository.findById(PASSENGER_ID)).thenReturn(Optional.empty());
+
+        assertThrows(PassengerNotExistsException.class, () -> passengerService.changeRestrictionsStatus(PASSENGER_ID));
         verify(passengerRepository, never()).save(any());
     }
 }

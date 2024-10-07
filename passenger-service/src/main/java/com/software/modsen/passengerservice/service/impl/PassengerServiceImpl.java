@@ -36,9 +36,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public Passenger save(Passenger passenger) {
-        if(passengerRepository.findPassengerByEmailAndPhoneNumber(
-                        passenger.getEmail(),
-                        passenger.getPhoneNumber()).isPresent()){
+        if (passengerRepository.findPassengerByEmailAndPhoneNumber(
+                passenger.getEmail(),
+                passenger.getPhoneNumber()).isPresent()) {
             throw new PassengerAlreadyExistsException(PASSENGER_ALREADY_EXISTS);
         }
         return passengerRepository.save(passenger);
