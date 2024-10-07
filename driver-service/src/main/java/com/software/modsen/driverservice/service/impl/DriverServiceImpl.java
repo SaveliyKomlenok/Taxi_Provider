@@ -44,7 +44,6 @@ public class DriverServiceImpl implements DriverService {
                 driver.getPhoneNumber()).isPresent()){
             throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
         }
-        System.err.println(driver.getCar().getId());
         driver.setCar(checkCarOccupancy(driver.getCar().getId()));
         return driverRepository.save(driver);
     }
