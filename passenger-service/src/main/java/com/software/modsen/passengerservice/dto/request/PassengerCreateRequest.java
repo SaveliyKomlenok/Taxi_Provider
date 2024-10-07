@@ -17,6 +17,7 @@ import static com.software.modsen.passengerservice.util.CustomValidatePatterns.P
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "Data for create passenger")
 public class PassengerCreateRequest {
     @Pattern(regexp = NAME_PATTERN, message = "Incorrect firstname")
     @Schema(defaultValue = "firstname")
