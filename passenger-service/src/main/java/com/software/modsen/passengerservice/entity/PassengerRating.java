@@ -31,7 +31,7 @@ public class PassengerRating {
     @Column(name = "rating")
     private double rating;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
 }
