@@ -31,7 +31,7 @@ public class DriverRating {
     @Column(name = "rating")
     private double rating;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 }
