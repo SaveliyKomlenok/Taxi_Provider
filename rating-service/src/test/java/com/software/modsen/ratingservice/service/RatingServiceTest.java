@@ -85,7 +85,7 @@ public class RatingServiceTest {
 
     @Test
     void ratingDriver_ShouldReturnUpdatedRating_WhenSuccessful() {
-        RatingDriverRequest request = RatingTestEntities.getDriverRatingRequestForIT();
+        RatingDriverRequest request = RatingTestEntities.getDriverRatingRequest();
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 request.getRideId(),
                 request.getDriverId(),
@@ -103,7 +103,7 @@ public class RatingServiceTest {
     @Test
     void ratingDriver_ShouldThrowException_WhenDriverHasAlreadyRated() {
         rating.setDriverRating(DRIVER_RATING);
-        RatingDriverRequest request = RatingTestEntities.getDriverRatingRequestForIT();
+        RatingDriverRequest request = RatingTestEntities.getDriverRatingRequest();
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 request.getRideId(),
                 request.getDriverId(),
@@ -116,7 +116,7 @@ public class RatingServiceTest {
 
     @Test
     void ratingDriver_ShouldThrowException_WhenRatingNotFound() {
-        RatingDriverRequest request = RatingTestEntities.getDriverRatingRequestForIT();
+        RatingDriverRequest request = RatingTestEntities.getDriverRatingRequest();
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 request.getRideId(),
                 request.getDriverId(),

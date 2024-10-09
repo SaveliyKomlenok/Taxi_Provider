@@ -19,7 +19,9 @@ public class RatingTestEntities {
     public static final Integer PAGE_SIZE = 10;
     public static final String SORT_BY_ID = "id";
     public static final Integer EXPECTED_LIST_SIZE = 1;
+    public static final Integer EXPECTED_RATING_LIST_SIZE = 2;
     public static final Integer FIRST_INDEX = 0;
+    public static final String RATING_BASE_URL = "http://localhost:8084/api/v1/ratings";
 
     public Rating getTestRating() {
         return Rating.builder()
@@ -32,11 +34,31 @@ public class RatingTestEntities {
                 .build();
     }
 
-    public RatingDriverRequest getDriverRatingRequestForIT() {
+    public RatingDriverRequest getDriverRatingRequest() {
         return RatingDriverRequest.builder()
                 .rideId(RIDE_ID)
                 .driverId(DRIVER_ID)
                 .passengerId(PASSENGER_ID)
+                .driverRating(DRIVER_RATING)
+                .comment(COMMENT)
+                .build();
+    }
+
+    public Rating getTestRatingForIT() {
+        return Rating.builder()
+                .passengerId(PASSENGER_ID)
+                .driverId(DRIVER_ID)
+                .passengerRating(PASSENGER_RATING)
+                .driverRating(null)
+                .comment(null)
+                .build();
+    }
+
+    public Rating getSecondTestRatingForIT() {
+        return Rating.builder()
+                .passengerId(PASSENGER_ID)
+                .driverId(DRIVER_ID)
+                .passengerRating(PASSENGER_RATING)
                 .driverRating(DRIVER_RATING)
                 .comment(COMMENT)
                 .build();
