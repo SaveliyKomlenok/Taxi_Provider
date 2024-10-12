@@ -1,9 +1,6 @@
 package com.software.modsen.ratingservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.software.modsen.ratingservice.entity.Rating;
 import com.software.modsen.ratingservice.repository.RatingRepository;
 import com.software.modsen.ratingservice.util.RatingTestEntities;
@@ -11,14 +8,10 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.List;
@@ -33,28 +26,16 @@ import static org.hamcrest.Matchers.isA;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WireMockTest
-public class RideControllerTest {
-    @Autowired
-    private WebTestClient webTestClient;
+public class RatingControllerTest {
+    //static ClientAndServer mockServer;
 
     @Autowired
     private RatingRepository ratingRepository;
 
-    @RegisterExtension
-    static WireMockExtension wireMockExtension = WireMockExtension.newInstance()
-            .options(WireMockConfiguration.wireMockConfig().dynamicPort())
-            .build();
-
-    @DynamicPropertySource
-    public static void setUp(DynamicPropertyRegistry registry) {
-        registry.add(RATING_BASE_URL, wireMockExtension::baseUrl);
-    }
-
     private ObjectMapper objectMapper;
 
     @BeforeAll
-    public static void setUpPostgresDB() {
+    public static void beforeAll() {
         PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15-alpine")
                 .withDatabaseName("rating_test_db")
                 .withUsername("postgres")
