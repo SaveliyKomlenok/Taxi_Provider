@@ -1,6 +1,8 @@
 package com.software.modsen.ratingservice.util;
 
+import com.software.modsen.ratingservice.dto.request.PassengerRatingRequest;
 import com.software.modsen.ratingservice.dto.request.RatingDriverRequest;
+import com.software.modsen.ratingservice.dto.request.RatingPassengerRequest;
 import com.software.modsen.ratingservice.entity.Rating;
 import lombok.experimental.UtilityClass;
 
@@ -22,6 +24,7 @@ public class RatingTestEntities {
     public static final Integer EXPECTED_RATING_LIST_SIZE = 2;
     public static final Integer FIRST_INDEX = 0;
     public static final String RATING_BASE_URL = "http://localhost:8084/api/v1/ratings";
+    public static final String PASSENGER_RATING_BASE_URL = "http://localhost:8081/api/v1/passenger-ratings";
 
     public Rating getTestRating() {
         return Rating.builder()
@@ -51,6 +54,22 @@ public class RatingTestEntities {
                 .passengerRating(PASSENGER_RATING)
                 .driverRating(null)
                 .comment(null)
+                .build();
+    }
+
+    public RatingPassengerRequest getRatingPassengerRequestForIT() {
+        return RatingPassengerRequest.builder()
+                .rideId(RIDE_ID)
+                .passengerId(PASSENGER_ID)
+                .driverId(DRIVER_ID)
+                .passengerRating(PASSENGER_RATING)
+                .build();
+    }
+
+    public PassengerRatingRequest getPassengerRatingRequestForIT(){
+        return PassengerRatingRequest.builder()
+                .passengerId(PASSENGER_ID)
+                .passengerRating(PASSENGER_RATING)
                 .build();
     }
 

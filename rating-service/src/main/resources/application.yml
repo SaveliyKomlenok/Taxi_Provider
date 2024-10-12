@@ -23,7 +23,7 @@ service:
   passenger:
     name: passenger-service
     rating:
-      url: /api/v1/passenger-ratings
+      url: http://localhost:8081/api/v1/passenger-ratings
   driver:
     name: driver-service
     rating:
