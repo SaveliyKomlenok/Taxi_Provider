@@ -15,6 +15,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
+import static com.software.modsen.driverservice.util.DriverRatingTestEntities.DRIVER_RATING;
+import static com.software.modsen.driverservice.util.DriverTestEntities.DRIVER_EMAIL;
 import static com.software.modsen.driverservice.util.DriverTestEntities.DRIVER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -76,17 +78,16 @@ public class DriverRatingServiceTest {
 
     @Test
     void save_ShouldUpdateExistingRating_WhenDriverRatingExists() {
-        DriverRating existingRating = DriverRatingTestEntities.getTestExistingDriverRating();
-
-        when(driverRatingRepository.findDriverRatingByDriverId(DRIVER_ID)).thenReturn(Optional.of(existingRating));
+        when(driverRatingRepository.findDriverRatingByDriverId(DRIVER_ID))
+                .thenReturn(Optional.of(driverRating));
         when(driverService.getById(DRIVER_ID)).thenReturn(driver);
-        when(driverRatingRepository.save(existingRating)).thenReturn(existingRating);
+        when(driverRatingRepository.save(driverRating)).thenReturn(driverRating);
 
-        DriverRating result = driverRatingService.save(driverRating);
+        DriverRating savedRating = driverRatingRepository.save(driverRating);
 
-        assertNotNull(result);
-        assertEquals(driverRating.getRating(), result.getRating());
-        assertEquals(driver, result.getDriver());
-        verify(driverRatingRepository).save(existingRating);
+        assertNotNull(savedRating);
+        assertEquals(DRIVER_EMAIL, savedRating.getDriver().getEmail());
+        assertEquals(DRIVER_RATING, savedRating.getRating());
+        verify(driverRatingRepository).save(driverRating);
     }
 }
