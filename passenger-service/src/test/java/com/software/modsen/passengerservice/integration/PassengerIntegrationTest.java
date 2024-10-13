@@ -1,4 +1,4 @@
-package com.software.modsen.passengerservice.controller;
+package com.software.modsen.passengerservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.software.modsen.passengerservice.dto.request.PassengerCreateRequest;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PassengerControllerTest {
+public class PassengerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 

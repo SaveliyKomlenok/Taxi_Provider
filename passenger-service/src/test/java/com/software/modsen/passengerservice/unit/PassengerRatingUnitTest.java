@@ -1,16 +1,18 @@
-package com.software.modsen.passengerservice.service;
+package com.software.modsen.passengerservice.unit;
 
 import com.software.modsen.passengerservice.entity.Passenger;
 import com.software.modsen.passengerservice.entity.PassengerRating;
 import com.software.modsen.passengerservice.exception.PassengerRatingNotExistsException;
 import com.software.modsen.passengerservice.repository.PassengerRatingRepository;
+import com.software.modsen.passengerservice.service.PassengerService;
 import com.software.modsen.passengerservice.service.impl.PassengerRatingServiceImpl;
 import com.software.modsen.passengerservice.util.TestEntities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -25,7 +27,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class PassengerRatingServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class PassengerRatingUnitTest {
     @Mock
     private PassengerRatingRepository passengerRatingRepository;
 
@@ -40,7 +43,6 @@ public class PassengerRatingServiceTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         passenger = TestEntities.getTestPassenger();
         passengerRating = TestEntities.getTestPassengerRating();
     }

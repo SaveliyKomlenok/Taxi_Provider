@@ -1,4 +1,4 @@
-package com.software.modsen.passengerservice.service;
+package com.software.modsen.passengerservice.unit;
 
 import com.software.modsen.passengerservice.entity.Passenger;
 import com.software.modsen.passengerservice.exception.PassengerAlreadyExistsException;
@@ -8,9 +8,10 @@ import com.software.modsen.passengerservice.service.impl.PassengerServiceImpl;
 import com.software.modsen.passengerservice.util.TestEntities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +39,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class PassengerServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class PassengerUnitTest {
     @Mock
     private PassengerRepository passengerRepository;
 
@@ -49,7 +51,6 @@ public class PassengerServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         passenger = TestEntities.getTestPassenger();
     }
 
