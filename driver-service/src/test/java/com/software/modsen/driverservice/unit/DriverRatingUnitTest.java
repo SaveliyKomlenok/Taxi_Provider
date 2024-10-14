@@ -1,9 +1,10 @@
-package com.software.modsen.driverservice.service;
+package com.software.modsen.driverservice.unit;
 
 import com.software.modsen.driverservice.entity.Driver;
 import com.software.modsen.driverservice.entity.DriverRating;
 import com.software.modsen.driverservice.exception.DriverRatingNotExistsException;
 import com.software.modsen.driverservice.repository.DriverRatingRepository;
+import com.software.modsen.driverservice.service.DriverService;
 import com.software.modsen.driverservice.service.impl.DriverRatingServiceImpl;
 import com.software.modsen.driverservice.util.DriverRatingTestEntities;
 import com.software.modsen.driverservice.util.DriverTestEntities;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DriverRatingServiceTest {
+public class DriverRatingUnitTest {
     @Mock
     private DriverRatingRepository driverRatingRepository;
 

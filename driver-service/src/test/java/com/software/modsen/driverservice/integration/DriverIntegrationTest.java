@@ -1,4 +1,4 @@
-package com.software.modsen.driverservice.controller;
+package com.software.modsen.driverservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.software.modsen.driverservice.dto.request.DriverCreateRequest;
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class DriverControllerTest {
+public class DriverIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 

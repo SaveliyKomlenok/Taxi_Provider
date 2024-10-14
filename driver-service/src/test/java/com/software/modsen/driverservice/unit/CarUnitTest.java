@@ -1,4 +1,4 @@
-package com.software.modsen.driverservice.service;
+package com.software.modsen.driverservice.unit;
 
 import com.software.modsen.driverservice.entity.Car;
 import com.software.modsen.driverservice.exception.CarAlreadyExistsException;
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CarServiceTest {
+public class CarUnitTest {
     @Mock
     private CarRepository carRepository;
 

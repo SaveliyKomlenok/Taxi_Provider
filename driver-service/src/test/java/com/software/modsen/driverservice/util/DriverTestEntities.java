@@ -9,14 +9,14 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class DriverTestEntities {
     public static final Long DRIVER_ID = 1L;
-    public static final String DRIVER_EMAIL = "driver@example.com";
+    public static final String DRIVER_EMAIL = "test@example.com";
     public static final String DRIVER_PHONE_NUMBER = "+375331234567";
     public static final boolean DRIVER_NOT_RESTRICT = false;
     public static final boolean DRIVER_NOT_BUSY = false;
     public static final Long CAR_ID = 1L;
     public static final Long SECOND_DRIVER_ID = 2L;
-    public static final String SECOND_DRIVER_EMAIL = "driver@example.com";
-    public static final String SECOND_DRIVER_PHONE_NUMBER = "+375331234567";
+    public static final String SECOND_DRIVER_EMAIL = "example@test.com";
+    public static final String SECOND_DRIVER_PHONE_NUMBER = "+375337654321";
     public static final String CAR_KIND = "Toyota";
     public static final Integer PAGE_NUMBER = 0;
     public static final Integer PAGE_SIZE = 10;
@@ -33,6 +33,22 @@ public class DriverTestEntities {
                 .build();
 
         return Driver.builder()
+                .email(DRIVER_EMAIL)
+                .phoneNumber(DRIVER_PHONE_NUMBER)
+                .car(car)
+                .restricted(DRIVER_NOT_RESTRICT)
+                .busy(DRIVER_NOT_BUSY)
+                .build();
+    }
+
+    public Driver getTestDriverForComponent() {
+        Car car = Car.builder()
+                .id(CAR_ID)
+                .kind(CAR_KIND)
+                .build();
+
+        return Driver.builder()
+                .id(DRIVER_ID)
                 .email(DRIVER_EMAIL)
                 .phoneNumber(DRIVER_PHONE_NUMBER)
                 .car(car)

@@ -1,9 +1,10 @@
-package com.software.modsen.driverservice.service;
+package com.software.modsen.driverservice.unit;
 
 import com.software.modsen.driverservice.entity.Driver;
 import com.software.modsen.driverservice.exception.DriverAlreadyExistsException;
 import com.software.modsen.driverservice.exception.DriverNotExistsException;
 import com.software.modsen.driverservice.repository.DriverRepository;
+import com.software.modsen.driverservice.service.CarService;
 import com.software.modsen.driverservice.service.impl.DriverServiceImpl;
 import com.software.modsen.driverservice.util.DriverTestEntities;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DriverServiceTest {
+public class DriverUnitTest {
     @Mock
     private DriverRepository driverRepository;
 
