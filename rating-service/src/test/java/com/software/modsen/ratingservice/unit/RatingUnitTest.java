@@ -1,10 +1,12 @@
-package com.software.modsen.ratingservice.service;
+package com.software.modsen.ratingservice.unit;
 
 import com.software.modsen.ratingservice.dto.request.RatingDriverRequest;
 import com.software.modsen.ratingservice.entity.Rating;
 import com.software.modsen.ratingservice.exception.DriverAlreadyHasRatingException;
 import com.software.modsen.ratingservice.exception.RatingDriverException;
 import com.software.modsen.ratingservice.repository.RatingRepository;
+import com.software.modsen.ratingservice.service.DriverRatingService;
+import com.software.modsen.ratingservice.service.PassengerRatingService;
 import com.software.modsen.ratingservice.service.impl.RatingServiceImpl;
 import com.software.modsen.ratingservice.util.RatingTestEntities;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +41,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RatingServiceTest {
+public class RatingUnitTest {
     @Mock
     private RatingRepository ratingRepository;
 

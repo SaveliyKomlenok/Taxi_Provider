@@ -37,6 +37,9 @@
         <mockserver.version>1.20.2</mockserver.version>
         <mockserver-netty.version>5.15.0</mockserver-netty.version>
         <rest-assured.version>5.5.0</rest-assured.version>
+        <cucumber.spring.version>7.20.0</cucumber.spring.version>
+        <cucumber-java.version>7.20.0</cucumber-java.version>
+        <cucumber-junit.version>7.20.0</cucumber-junit.version>
         <liquibase-core.version>4.29.2</liquibase-core.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
         <springdoc-openapi-ui.version>1.6.14</springdoc-openapi-ui.version>
@@ -113,6 +116,23 @@
             <artifactId>mockserver-netty</artifactId>
             <version>${mockserver-netty.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber-java.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber-junit.version}</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>

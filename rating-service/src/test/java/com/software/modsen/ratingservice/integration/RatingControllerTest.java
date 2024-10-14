@@ -1,4 +1,4 @@
-package com.software.modsen.ratingservice.controller;
+package com.software.modsen.ratingservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.software.modsen.ratingservice.dto.request.PassengerRatingRequest;

@@ -15,7 +15,7 @@ import java.util.List;
 public class RatingMapper {
     private final ModelMapper mapper;
 
-    public Rating fromRequestToEntity(RatingPassengerRequest request) {
+    public Rating toEntity(RatingPassengerRequest request) {
         return Rating.builder()
                 .rideId(request.getRideId())
                 .driverId(request.getDriverId())
@@ -24,11 +24,11 @@ public class RatingMapper {
                 .build();
     }
 
-    public RatingResponse fromEntityToResponse(Rating rating) {
+    public RatingResponse toResponse(Rating rating) {
         return mapper.map(rating, RatingResponse.class);
     }
 
-    public RatingListResponse fromListEntityToListResponse(List<Rating> ratingList) {
+    public RatingListResponse toListResponse(List<Rating> ratingList) {
         List<RatingResponse> ratingResponseList = ratingList.stream()
                 .map(rating -> mapper.map(rating, RatingResponse.class))
                 .toList();
