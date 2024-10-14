@@ -1,4 +1,4 @@
-package com.software.modsen.rideservice.service;
+package com.software.modsen.rideservice.unit;
 
 import com.software.modsen.rideservice.dto.request.RideCancelRequest;
 import com.software.modsen.rideservice.dto.request.RideFinishRequest;
@@ -14,6 +14,9 @@ import com.software.modsen.rideservice.exception.RideChangeStatusException;
 import com.software.modsen.rideservice.exception.RideFinishException;
 import com.software.modsen.rideservice.exception.RideNotExistsException;
 import com.software.modsen.rideservice.repository.RideRepository;
+import com.software.modsen.rideservice.service.DriverService;
+import com.software.modsen.rideservice.service.PassengerService;
+import com.software.modsen.rideservice.service.RatingService;
 import com.software.modsen.rideservice.service.impl.RideServiceImpl;
 import com.software.modsen.rideservice.util.RideTestEntities;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +47,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RideServiceTest {
+public class RideUnitTest {
     @Mock
     private RideRepository rideRepository;
 

@@ -47,6 +47,7 @@ public class RideTestEntities {
                 .id(PASSENGER_ID)
                 .email(DEFAULT_EMAIL)
                 .phoneNumber(DEFAULT_PHONE_NUMBER)
+                .isRestricted(false)
                 .build();
     }
 
