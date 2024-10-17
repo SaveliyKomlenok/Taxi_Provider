@@ -33,6 +33,7 @@ public class DriverTestEntities {
                 .build();
 
         return Driver.builder()
+                .id(DRIVER_ID)
                 .email(DRIVER_EMAIL)
                 .phoneNumber(DRIVER_PHONE_NUMBER)
                 .car(car)
@@ -60,8 +61,8 @@ public class DriverTestEntities {
     public Driver getSecondTestDriver() {
         return Driver.builder()
                 .id(SECOND_DRIVER_ID)
-                .email(SECOND_DRIVER_EMAIL)
-                .phoneNumber(SECOND_DRIVER_PHONE_NUMBER)
+                .email(DRIVER_EMAIL)
+                .phoneNumber(DRIVER_PHONE_NUMBER)
                 .restricted(DRIVER_NOT_RESTRICT)
                 .busy(DRIVER_NOT_BUSY)
                 .build();
@@ -94,8 +95,8 @@ public class DriverTestEntities {
 
     public DriverUpdateRequest getDriverUpdateRequestForIT() {
         return DriverUpdateRequest.builder()
-                .email(DRIVER_EMAIL)
-                .phoneNumber(DRIVER_PHONE_NUMBER)
+                .email(SECOND_DRIVER_EMAIL)
+                .phoneNumber(SECOND_DRIVER_PHONE_NUMBER)
                 .build();
     }
 }

@@ -8,7 +8,7 @@
         <version>3.3.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.modsen</groupId>
+    <groupId>com.software.modsen</groupId>
     <artifactId>passenger-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>passenger-service</name>
@@ -34,9 +34,11 @@
         <cucumber.spring.version>7.20.0</cucumber.spring.version>
         <cucumber-java.version>7.20.0</cucumber-java.version>
         <cucumber-junit.version>7.20.0</cucumber-junit.version>
+        <spring-cloud-starter-contract-verifier.version>4.1.4</spring-cloud-starter-contract-verifier.version>
         <liquibase-core.version>4.29.2</liquibase-core.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
         <modelmapper.version>3.2.1</modelmapper.version>
+        <spring-cloud-contract.version>2.1.1.RELEASE</spring-cloud-contract.version>
     </properties>
     <dependencies>
         <dependency>
@@ -100,6 +102,12 @@
             <version>${cucumber-junit.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+            <version>${spring-cloud-starter-contract-verifier.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase-core.version}</version>
@@ -136,6 +144,15 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                <version>${spring-cloud-contract.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <baseClassForTests>com.software.modsen.passengerservice.contract.PassengerContractTest</baseClassForTests>
                 </configuration>
             </plugin>
         </plugins>

@@ -27,8 +27,9 @@ public class DriverRatingTestEntities {
                 .build();
     }
 
-    public DriverRatingRequest getTestDriverRatingRequest() {
+    public DriverRatingRequest getTestDriverRatingRequest(Long driverId) {
         return DriverRatingRequest.builder()
+                .driverId(driverId)
                 .driverRating(DRIVER_RATING)
                 .build();
     }

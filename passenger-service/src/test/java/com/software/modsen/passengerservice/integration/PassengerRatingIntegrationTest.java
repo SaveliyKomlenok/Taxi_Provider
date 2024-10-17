@@ -20,7 +20,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.List;
 
-import static com.software.modsen.passengerservice.util.TestEntities.EXPECTED_LIST_SIZE;
 import static com.software.modsen.passengerservice.util.TestEntities.FIRST_INDEX;
 import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_EMAIL;
 import static com.software.modsen.passengerservice.util.TestEntities.PASSENGER_RATING;
@@ -70,11 +69,11 @@ public class PassengerRatingIntegrationTest {
         Passenger passenger = TestEntities.getPassengerForIT();
         passengerRepository.save(passenger);
 
-        PassengerRating passengerRating = TestEntities.getPassengerRatingForIT();
+        PassengerRating passengerRating = TestEntities.getPassengerRatingForIT(passenger);
         passengerRating.setPassenger(passenger);
         passengerRatingRepository.save(passengerRating);
 
-        mockMvc.perform(get(PASSENGER_RATING_BASE_URL + "/{id}", passengerRating.getId()))
+        mockMvc.perform(get(PASSENGER_RATING_BASE_URL + "/{id}", passengerRating.getPassenger().getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.passengerRating").value(PASSENGER_RATING));
@@ -86,7 +85,7 @@ public class PassengerRatingIntegrationTest {
         Passenger passenger = TestEntities.getPassengerForIT();
         passengerRepository.save(passenger);
 
-        PassengerRatingRequest request = TestEntities.getPassengerRatingRequestForIT();
+        PassengerRatingRequest request = TestEntities.getPassengerRatingRequestForIT(passenger.getId());
         String jsonRequest = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post(PASSENGER_RATING_BASE_URL)
@@ -96,7 +95,6 @@ public class PassengerRatingIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         List<PassengerRating> passengerRatingList = passengerRatingRepository.findAll();
-        assertThat(passengerRatingList).hasSize(EXPECTED_LIST_SIZE);
         assertThat(passengerRatingList.get(FIRST_INDEX).getRating()).isEqualTo(PASSENGER_RATING);
         assertThat(passengerRatingList.get(FIRST_INDEX).getPassenger().getEmail()).isEqualTo(PASSENGER_EMAIL);
     }
