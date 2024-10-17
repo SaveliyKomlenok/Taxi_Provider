@@ -62,7 +62,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: [ "prometheus" ]
+        include: "*"
   endpoint:
     health:
       show-details: always
@@ -71,6 +71,8 @@ management:
       enabled: true
 
 eureka:
+  instance:
+    hostname: ride-service
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
