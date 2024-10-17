@@ -32,6 +32,6 @@ public class PassengerRatingController {
     @PostMapping
     public ResponseEntity<PassengerRatingResponse> save(@RequestBody @Valid PassengerRatingRequest request){
         PassengerRating passengerRating = passengerRatingService.save(ratingMapper.toEntity(request));
-        return new ResponseEntity<>(ratingMapper.toResponse(passengerRating), HttpStatus.OK);
+        return new ResponseEntity<>(ratingMapper.toResponse(passengerRating), HttpStatus.CREATED);
     }
 }
