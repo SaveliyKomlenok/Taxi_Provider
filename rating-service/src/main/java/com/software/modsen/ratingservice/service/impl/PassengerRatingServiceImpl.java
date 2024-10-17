@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static com.software.modsen.ratingservice.util.ExceptionMessages.DRIVER_SERVICE_NOT_AVAILABLE;
+import static com.software.modsen.ratingservice.util.ExceptionMessages.PASSENGER_SERVICE_NOT_AVAILABLE;
 import static com.software.modsen.ratingservice.util.RetryConstants.SAVE_PASSENGER_RATING;
 
 @Service
@@ -29,6 +29,6 @@ public class PassengerRatingServiceImpl implements PassengerRatingService {
 
     private PassengerRatingResponse fallBackSavePassengerRating(Throwable throwable) {
         log.info(throwable.getMessage());
-        throw new ServiceNotAvailableException(DRIVER_SERVICE_NOT_AVAILABLE);
+        throw new ServiceNotAvailableException(PASSENGER_SERVICE_NOT_AVAILABLE);
     }
 }

@@ -24,18 +24,18 @@ public class RatingController {
     public ResponseEntity<RatingListResponse> getAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                      @RequestParam(required = false, defaultValue = "id") String sortBy) {
-        return new ResponseEntity<>(ratingMapper.fromListEntityToListResponse(ratingService.getAll(pageNumber, pageSize, sortBy)), HttpStatus.OK);
+        return new ResponseEntity<>(ratingMapper.toListResponse(ratingService.getAll(pageNumber, pageSize, sortBy)), HttpStatus.OK);
     }
 
     @PostMapping("/passenger")
     public ResponseEntity<RatingResponse> ratedPassenger(@RequestBody @Valid RatingPassengerRequest request) {
-        Rating rating = ratingService.ratingPassenger(ratingMapper.fromRequestToEntity(request));
-        return new ResponseEntity<>(ratingMapper.fromEntityToResponse(rating), HttpStatus.CREATED);
+        Rating rating = ratingService.ratingPassenger(ratingMapper.toEntity(request));
+        return new ResponseEntity<>(ratingMapper.toResponse(rating), HttpStatus.CREATED);
     }
 
     @PutMapping("/driver")
     public ResponseEntity<RatingResponse> ratedDriver(@RequestBody @Valid RatingDriverRequest request) {
         Rating rating = ratingService.ratingDriver(request);
-        return new ResponseEntity<>(ratingMapper.fromEntityToResponse(rating), HttpStatus.OK);
+        return new ResponseEntity<>(ratingMapper.toResponse(rating), HttpStatus.OK);
     }
 }

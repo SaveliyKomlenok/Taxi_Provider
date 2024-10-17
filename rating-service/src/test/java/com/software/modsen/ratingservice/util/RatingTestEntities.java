@@ -1,0 +1,85 @@
+package com.software.modsen.ratingservice.util;
+
+import com.software.modsen.ratingservice.dto.request.PassengerRatingRequest;
+import com.software.modsen.ratingservice.dto.request.RatingDriverRequest;
+import com.software.modsen.ratingservice.dto.request.RatingPassengerRequest;
+import com.software.modsen.ratingservice.entity.Rating;
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public class RatingTestEntities {
+    public static final Long RATING_ID = 1L;
+    public static final Long PASSENGER_ID = 2L;
+    public static final Long DRIVER_ID = 3L;
+    public static final Long RIDE_ID = 4L;
+    public static final Integer PASSENGER_RATING = 4;
+    public static final Integer DRIVER_RATING = 5;
+    public static final Double AVERAGE_PASSENGER_RATING = 4.0;
+    public static final Double AVERAGE_DRIVER_RATING = 5.0;
+    public static final String COMMENT = "Great driver!";
+    public static final Integer PAGE_NUMBER = 0;
+    public static final Integer PAGE_SIZE = 10;
+    public static final String SORT_BY_ID = "id";
+    public static final Integer EXPECTED_LIST_SIZE = 1;
+    public static final Integer EXPECTED_RATING_LIST_SIZE = 2;
+    public static final Integer FIRST_INDEX = 0;
+    public static final String RATING_BASE_URL = "http://localhost:8084/api/v1/ratings";
+    public static final String PASSENGER_RATING_BASE_URL = "http://localhost:8081/api/v1/passenger-ratings";
+
+    public Rating getTestRating() {
+        return Rating.builder()
+                .id(RATING_ID)
+                .passengerId(PASSENGER_ID)
+                .driverId(DRIVER_ID)
+                .passengerRating(PASSENGER_RATING)
+                .driverRating(null)
+                .comment(COMMENT)
+                .build();
+    }
+
+    public RatingDriverRequest getDriverRatingRequest() {
+        return RatingDriverRequest.builder()
+                .rideId(RIDE_ID)
+                .driverId(DRIVER_ID)
+                .passengerId(PASSENGER_ID)
+                .driverRating(DRIVER_RATING)
+                .comment(COMMENT)
+                .build();
+    }
+
+    public Rating getTestRatingForIT() {
+        return Rating.builder()
+                .passengerId(PASSENGER_ID)
+                .driverId(DRIVER_ID)
+                .passengerRating(PASSENGER_RATING)
+                .driverRating(null)
+                .comment(null)
+                .build();
+    }
+
+    public RatingPassengerRequest getRatingPassengerRequestForIT() {
+        return RatingPassengerRequest.builder()
+                .rideId(RIDE_ID)
+                .passengerId(PASSENGER_ID)
+                .driverId(DRIVER_ID)
+                .passengerRating(PASSENGER_RATING)
+                .build();
+    }
+
+    public PassengerRatingRequest getPassengerRatingRequestForIT(){
+        return PassengerRatingRequest.builder()
+                .passengerId(PASSENGER_ID)
+                .passengerRating(PASSENGER_RATING)
+                .build();
+    }
+
+    public Rating getSecondTestRatingForIT() {
+        return Rating.builder()
+                .passengerId(PASSENGER_ID)
+                .driverId(DRIVER_ID)
+                .passengerRating(PASSENGER_RATING)
+                .driverRating(DRIVER_RATING)
+                .comment(COMMENT)
+                .build();
+    }
+}
