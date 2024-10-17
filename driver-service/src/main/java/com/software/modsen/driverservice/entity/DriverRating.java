@@ -11,9 +11,11 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -22,6 +24,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "driver_ratings")
 @Builder
+@EqualsAndHashCode
+@ToString
 public class DriverRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +35,7 @@ public class DriverRating {
     @Column(name = "rating")
     private double rating;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 }
