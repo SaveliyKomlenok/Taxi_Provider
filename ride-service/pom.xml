@@ -35,6 +35,9 @@
         <cucumber.spring.version>7.20.0</cucumber.spring.version>
         <cucumber-java.version>7.20.0</cucumber-java.version>
         <cucumber-junit.version>7.20.0</cucumber-junit.version>
+        <spring-cloud-contract-wiremock.version>4.1.4</spring-cloud-contract-wiremock.version>
+        <spring-cloud-starter-contract-stub-runner.version>4.1.4</spring-cloud-starter-contract-stub-runner.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
         <liquibase-core.version>4.29.2</liquibase-core.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
         <modelmapper.version>3.2.1</modelmapper.version>
@@ -100,6 +103,17 @@
             <version>${cucumber-junit.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-wiremock</artifactId>
+            <version>${spring-cloud-contract-wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-contract-stub-runner</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase-core.version}</version>
@@ -124,6 +138,18 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -140,5 +166,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

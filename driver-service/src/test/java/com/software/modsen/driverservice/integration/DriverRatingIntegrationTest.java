@@ -86,7 +86,7 @@ public class DriverRatingIntegrationTest {
         driverRating.setDriver(driver);
         driverRatingRepository.save(driverRating);
 
-        mockMvc.perform(get(DRIVER_RATING_BASE_URL + "/{id}", driverRating.getId()))
+        mockMvc.perform(get(DRIVER_RATING_BASE_URL + "/{id}", driverRating.getDriver().getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.driverRating").value(DRIVER_RATING));
@@ -101,8 +101,7 @@ public class DriverRatingIntegrationTest {
         Driver driver = DriverTestEntities.getTestDriver();
         driverRepository.save(driver);
 
-        DriverRatingRequest request = DriverRatingTestEntities.getTestDriverRatingRequest();
-        request.setDriverId(driver.getId());
+        DriverRatingRequest request = DriverRatingTestEntities.getTestDriverRatingRequest(driver.getId());
         String jsonRequest = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post(DRIVER_RATING_BASE_URL)

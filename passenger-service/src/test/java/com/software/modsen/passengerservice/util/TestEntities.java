@@ -55,6 +55,9 @@ public class TestEntities {
 
     public Passenger getPassengerForIT() {
         return Passenger.builder()
+                .firstname(PASSENGER_FIRSTNAME)
+                .surname(PASSENGER_SURNAME)
+                .patronymic(PASSENGER_PATRONYMIC)
                 .email(PASSENGER_EMAIL)
                 .phoneNumber(PASSENGER_PHONE_NUMBER)
                 .build();
@@ -87,15 +90,16 @@ public class TestEntities {
                 .build();
     }
 
-    public PassengerRating getPassengerRatingForIT() {
+    public PassengerRating getPassengerRatingForIT(Passenger passenger) {
         return PassengerRating.builder()
+                .passenger(passenger)
                 .rating(PASSENGER_RATING)
                 .build();
     }
 
-    public PassengerRatingRequest getPassengerRatingRequestForIT() {
+    public PassengerRatingRequest getPassengerRatingRequestForIT(Long passengerId) {
         return PassengerRatingRequest.builder()
-                .passengerId(PASSENGER_ID)
+                .passengerId(passengerId)
                 .passengerRating(PASSENGER_RATING)
                 .build();
     }

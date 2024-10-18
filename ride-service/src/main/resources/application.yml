@@ -4,8 +4,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/taxi_provider_db
     driver-class-name: org.postgresql.Driver
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: postgres
+    password: skademon
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: false
