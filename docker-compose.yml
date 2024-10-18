@@ -38,7 +38,7 @@ services:
     container_name: passenger-service
     image: passenger-service
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/passengers
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/passengers_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -54,7 +54,7 @@ services:
     container_name: driver-service
     image: driver-service
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/drivers
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/drivers_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -70,7 +70,7 @@ services:
     container_name: ride-service
     image: ride-service
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/rides
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/rides_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -86,7 +86,7 @@ services:
     container_name: rating-service
     image: rating-service
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ratings
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ratings_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
