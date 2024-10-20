@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: postgres
-    image: postgres:15-alpine
+    image: saveliy950/postgres
     restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -16,7 +16,7 @@ services:
 
   eureka-server:
     container_name: eureka-server
-    image: eureka-server
+    image: saveliy950/eureka-server
     ports:
       - "8761:8761"
     networks:
@@ -24,7 +24,7 @@ services:
 
   api-gateway:
     container_name: api-gateway
-    image: api-gateway
+    image: saveliy950/api-gateway
     environment:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     ports:
@@ -36,7 +36,7 @@ services:
 
   passenger-service:
     container_name: passenger-service
-    image: passenger-service
+    image: saveliy950/passenger-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/passengers_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -52,7 +52,7 @@ services:
 
   driver-service:
     container_name: driver-service
-    image: driver-service
+    image: saveliy950/driver-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/drivers_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -68,7 +68,7 @@ services:
 
   ride-service:
     container_name: ride-service
-    image: ride-service
+    image: saveliy950/ride-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/rides_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -84,7 +84,7 @@ services:
 
   rating-service:
     container_name: rating-service
-    image: rating-service
+    image: saveliy950/rating-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ratings_db
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
@@ -99,7 +99,7 @@ services:
       - taxi_provider
 
   prometheus:
-    image: prom/prometheus
+    image: saveliy950/prometheus
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -109,7 +109,7 @@ services:
       - taxi_provider
 
   grafana:
-    image: grafana/grafana
+    image: saveliy950/grafana
     container_name: grafana
     ports:
       - "3000:3000"

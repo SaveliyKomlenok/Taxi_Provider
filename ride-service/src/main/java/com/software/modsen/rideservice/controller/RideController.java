@@ -56,25 +56,25 @@ public class RideController {
         return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/accept")
+    @PostMapping("/accept")
     public ResponseEntity<RideResponse> accept(@RequestBody @Valid RideStatusChangeRequest request) {
         Ride ride = rideService.accept(request);
         return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 
-    @PatchMapping("/finish")
+    @PostMapping("/finish")
     public ResponseEntity<RideResponse> finish(@RequestBody @Valid RideFinishRequest request) {
         Ride ride = rideService.finish(request);
         return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 
-    @PatchMapping("/cancel")
+    @PostMapping("/cancel")
     public ResponseEntity<RideResponse> cancel(@RequestBody @Valid RideCancelRequest request) {
         Ride ride = rideService.cancel(request);
         return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
     }
 
-    @PatchMapping("/change-status")
+    @PostMapping("/change-status")
     public ResponseEntity<RideResponse> changeStatus(@RequestBody @Valid RideStatusChangeRequest request) {
         Ride ride = rideService.changeStatus(request);
         return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
