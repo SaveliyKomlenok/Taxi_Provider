@@ -1,8 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: prometheus
 spec:
+  serviceName: "prometheus"
   replicas: 1
   selector:
     matchLabels:
@@ -18,6 +19,8 @@ spec:
           ports:
             - containerPort: 9090
           volumeMounts:
+            - name: prometheus-storage
+              mountPath: /prometheus
             - name: prometheus-config
               mountPath: /etc/prometheus/prometheus.yml
               subPath: prometheus.yml
@@ -25,6 +28,14 @@ spec:
         - name: prometheus-config
           configMap:
             name: prometheus-config
+  volumeClaimTemplates:
+    - metadata:
+        name: prometheus-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -44,11 +55,11 @@ metadata:
   name: prometheus-config
 data:
   prometheus.yml: |
+    global:
+      scrape_interval: 5s
     scrape_configs:
-    - job_name: 'TaxiProviderMetrics'
-      metrics_path: '/actuator/prometheus'
-      scrape_interval: 3s
-      static_configs:
-        - targets: ['host.docker.internal:8765']
-          labels:
-            application: 'Taxi provider'
+      - job_name: 'api-gateway'
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets:
+              - 'api-gateway:8765'

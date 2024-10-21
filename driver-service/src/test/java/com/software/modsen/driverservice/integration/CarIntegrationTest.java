@@ -7,7 +7,6 @@ import com.software.modsen.driverservice.entity.Car;
 import com.software.modsen.driverservice.repository.CarRepository;
 import com.software.modsen.driverservice.util.CarTestEntities;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.List;
 
@@ -35,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CarIntegrationTest {
+public class CarIntegrationTest extends PostgresTestContainerSetup {
     @Autowired
     private MockMvc mockMvc;
 
@@ -43,19 +41,6 @@ public class CarIntegrationTest {
     private CarRepository carRepository;
 
     private ObjectMapper objectMapper;
-
-    @BeforeAll
-    public static void setUpPostgresDB() {
-        PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15-alpine")
-                .withDatabaseName("car_test_db")
-                .withUsername("postgres")
-                .withPassword("root");
-        postgreSQLContainer.start();
-
-        System.setProperty("spring.datasource.url", postgreSQLContainer.getJdbcUrl());
-        System.setProperty("spring.datasource.username", postgreSQLContainer.getUsername());
-        System.setProperty("spring.datasource.password", postgreSQLContainer.getPassword());
-    }
 
     @BeforeEach
     public void setUp() {
