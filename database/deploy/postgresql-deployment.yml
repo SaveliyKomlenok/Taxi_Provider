@@ -1,8 +1,9 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
 spec:
+  serviceName: "postgres"
   replicas: 1
   selector:
     matchLabels:
@@ -23,12 +24,22 @@ spec:
             - name: POSTGRES_PASSWORD
               value: skademon
           volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: init-scripts
           configMap:
             name: postgres-init-scripts
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
 
 ---
 apiVersion: v1
@@ -42,7 +53,6 @@ spec:
       targetPort: 5432
   selector:
     app: postgres
-
 ---
 apiVersion: v1
 kind: ConfigMap
