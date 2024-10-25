@@ -26,7 +26,7 @@ class PassengerController(private val passengerService: PassengerService, privat
         @RequestParam(defaultValue = "0") pageNumber: Int = 0,
         @RequestParam(defaultValue = "10") pageSize: Int = 10,
         @RequestParam(defaultValue = "id") sortBy: String = "id",
-        @RequestParam isRestricted: Boolean
+        @RequestParam(defaultValue = "false")  isRestricted: Boolean
     ): ResponseEntity<PassengerListResponse> {
         val passengerList: List<Passenger?> = passengerService.getAll(pageNumber, pageSize, sortBy, isRestricted)
         return ResponseEntity(passengerMapper.toListResponse(passengerList), HttpStatus.OK)
@@ -54,12 +54,11 @@ class PassengerController(private val passengerService: PassengerService, privat
     }
 
     @Operation(summary = "Changing restrict status of passenger")
-    @PutMapping("/{id}")
+    @PutMapping("/status")
     fun changeRestrictionsStatus(
-        @PathVariable id: Long,
         @RequestBody request: PassengerChangeStatusRequest
     ): ResponseEntity<PassengerResponse> {
-        val passenger: Passenger = passengerService.changeRestrictionsStatus(id, request)
+        val passenger: Passenger = passengerService.changeRestrictionsStatus(request)
         return ResponseEntity(passengerMapper.toResponse(passenger), HttpStatus.OK)
     }
 }

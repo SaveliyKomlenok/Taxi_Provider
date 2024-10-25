@@ -8,5 +8,5 @@ interface PassengerService {
     fun getAll(pageNumber: Int, pageSize: Int, sortBy: String, includeRestricted: Boolean): List<Passenger?>
     fun save(passenger: Passenger): Passenger
     fun update(passenger: Passenger): Passenger
-    fun changeRestrictionsStatus(id: Long, request: PassengerChangeStatusRequest): Passenger
+    fun changeRestrictionsStatus(request: PassengerChangeStatusRequest): Passenger
 }

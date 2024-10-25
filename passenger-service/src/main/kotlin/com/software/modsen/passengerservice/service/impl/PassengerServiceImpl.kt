@@ -38,14 +38,14 @@ class PassengerServiceImpl(private val passengerRepository: PassengerRepository)
         getOrThrow(passenger.id!!)
         val existingPassenger = passengerRepository
             .findPassengerByEmailAndPhoneNumber(passenger.email, passenger.phoneNumber)
-        if (existingPassenger?.id != passenger.id) {
+        if (existingPassenger != null && existingPassenger.id != passenger.id) {
             throw PassengerAlreadyExistsException(ExceptionMessages.PASSENGER_ALREADY_EXISTS)
         }
         return passengerRepository.save(passenger)
     }
 
-    override fun changeRestrictionsStatus(id: Long, request: PassengerChangeStatusRequest): Passenger {
-        val passenger = getOrThrow(id)
+    override fun changeRestrictionsStatus(request: PassengerChangeStatusRequest): Passenger {
+        val passenger = getOrThrow(request.id)
         passenger.restricted = request.status
         return passengerRepository.save(passenger)
     }
