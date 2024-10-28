@@ -17,7 +17,7 @@ class PassengerServiceImpl(private val passengerRepository: PassengerRepository)
         return getOrThrow(id)
     }
 
-    override fun getAll(pageNumber: Int, pageSize: Int, sortBy: String, includeRestricted: Boolean): List<Passenger?> {
+    override fun getAll(pageNumber: Int, pageSize: Int, sortBy: String, includeRestricted: Boolean): List<Passenger> {
         return if (includeRestricted) {
             passengerRepository.findAllByRestrictedIsTrue(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy)))
         } else {

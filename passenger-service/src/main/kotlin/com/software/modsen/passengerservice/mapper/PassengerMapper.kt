@@ -47,9 +47,9 @@ class PassengerMapper {
         )
     }
 
-    fun toListResponse(passengers: List<Passenger?>): PassengerListResponse {
+    fun toListResponse(passengers: List<Passenger>): PassengerListResponse {
         return PassengerListResponse(
-            items = passengers.map { toResponse(it!!) }
+            items = passengers.map { toResponse(it) }
         )
     }
 }

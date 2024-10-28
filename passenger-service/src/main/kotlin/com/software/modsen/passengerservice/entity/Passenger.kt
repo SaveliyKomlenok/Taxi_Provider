@@ -12,32 +12,43 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "passengers")
-class Passenger() {
+class Passenger {
     @field:Id
     @field:GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:Column(name = "passenger_id")
-    var id: Long? = null
+    var id: Long?
 
     @field:Column(name = "firstname")
-    var firstname: String = ""
+    var firstname: String
 
     @field:Column(name = "surname")
-    var surname: String = ""
+    var surname: String
 
     @field:Column(name = "patronymic")
-    var patronymic: String = ""
+    var patronymic: String
 
     @field:Column(name = "email")
-    var email: String = ""
+    var email: String
 
     @field:Column(name = "phone_number")
-    var phoneNumber: String = ""
+    var phoneNumber: String
 
     @field:Column(name = "is_restricted")
-    var restricted: Boolean = false
+    var restricted: Boolean
 
     @field:OneToOne(mappedBy = "passenger", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    var passengerRating: PassengerRating? = null
+    var passengerRating: PassengerRating?
+
+    constructor(){
+        id = null
+        firstname = ""
+        surname = ""
+        patronymic = ""
+        email = ""
+        phoneNumber = ""
+        restricted = false
+        passengerRating = null
+    }
 
     constructor(id: Long?) : this() {
         this.id = id

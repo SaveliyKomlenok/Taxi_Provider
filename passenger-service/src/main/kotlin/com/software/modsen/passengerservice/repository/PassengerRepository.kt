@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PassengerRepository : JpaRepository<Passenger, Long> {
-    fun findAllByRestrictedIsTrue(pageRequest: PageRequest): List<Passenger?>
+    fun findAllByRestrictedIsTrue(pageRequest: PageRequest): List<Passenger>
     fun findPassengerByEmailAndPhoneNumber(email: String, phoneNumber: String): Passenger?
 }

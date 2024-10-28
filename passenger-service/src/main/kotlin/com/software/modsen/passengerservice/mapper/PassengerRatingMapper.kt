@@ -24,22 +24,4 @@ class PassengerRatingMapper(private val passengerMapper: PassengerMapper) {
             passengerRating = passengerRating.rating
         )
     }
-    //    public PassengerRating toEntity(PassengerRatingRequest request){
-//        Passenger passenger = Passenger.builder()
-//                .id(request.getPassengerId())
-//                .build();
-//        return PassengerRating.builder()
-//                .rating(request.getPassengerRating())
-//                .passenger(passenger)
-//                .build();
-//    }
-//
-//    public PassengerRatingResponse toResponse(PassengerRating passengerRating) {
-//        PassengerResponse passengerResponse = mapper.map(passengerRating.passenger, PassengerResponse.class);
-//        return PassengerRatingResponse.builder()
-//                .id(passengerRating.id)
-//                .passenger(passengerResponse)
-//                .passengerRating(passengerRating.rating)
-//                .build();
-//    }
 }

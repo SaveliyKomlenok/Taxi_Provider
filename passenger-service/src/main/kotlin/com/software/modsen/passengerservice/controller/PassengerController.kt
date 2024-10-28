@@ -28,7 +28,7 @@ class PassengerController(private val passengerService: PassengerService, privat
         @RequestParam(defaultValue = "id") sortBy: String = "id",
         @RequestParam(defaultValue = "false")  isRestricted: Boolean
     ): ResponseEntity<PassengerListResponse> {
-        val passengerList: List<Passenger?> = passengerService.getAll(pageNumber, pageSize, sortBy, isRestricted)
+        val passengerList: List<Passenger> = passengerService.getAll(pageNumber, pageSize, sortBy, isRestricted)
         return ResponseEntity(passengerMapper.toListResponse(passengerList), HttpStatus.OK)
     }
 
