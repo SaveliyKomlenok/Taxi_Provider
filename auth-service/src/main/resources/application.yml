@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: auth-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/taxi_provider_realm
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/taxi_provider_realm
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: taxi_provider_auth
+            client-secret: 6eiLNJf4OuqJxiqHhgIckAutcUzqd7FX
+            scope: openid
+server:
+  port: 8085
