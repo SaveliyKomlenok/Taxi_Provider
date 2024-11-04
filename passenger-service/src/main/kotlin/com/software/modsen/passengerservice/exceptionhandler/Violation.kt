@@ -1,3 +1,3 @@
 package com.software.modsen.passengerservice.exceptionhandler
 
-data class Violation(var fieldName: String, var message: String)
+data class Violation(val fieldName: String, var message: String?)

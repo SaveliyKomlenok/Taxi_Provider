@@ -30,7 +30,7 @@ class ExceptionHandlerControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun onMethodArgumentNotValidException(e: MethodArgumentNotValidException): ValidationErrorResponse {
         val violations = e.bindingResult.fieldErrors.map { error ->
-            Violation(error.field, error.defaultMessage!!)
+            Violation(error.field, error.defaultMessage)
         }.toList()
         return ValidationErrorResponse(violations)
     }
