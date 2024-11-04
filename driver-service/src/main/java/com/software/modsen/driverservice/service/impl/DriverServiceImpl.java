@@ -44,16 +44,7 @@ public class DriverServiceImpl implements DriverService {
                 driver.getPhoneNumber()).isPresent()){
             throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
         }
-        driver.setCar(checkCarOccupancy(driver.getCar().getId()));
         return driverRepository.save(driver);
-    }
-
-    private Car checkCarOccupancy(Long id) {
-        Car car = carService.getById(id);
-        if (driverRepository.findDriverByCarId(id).isPresent()) {
-            throw new CarOccupiedException(String.format(CAR_OCCUPIED, id));
-        }
-        return car;
     }
 
     @Override

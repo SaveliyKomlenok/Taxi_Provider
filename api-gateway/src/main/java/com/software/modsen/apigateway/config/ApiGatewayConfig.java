@@ -18,6 +18,8 @@ public class ApiGatewayConfig {
                         .uri("lb://rating-service"))
                 .route("ride-service", route -> route.path("/api/v1/rides/**")
                         .uri("lb://ride-service"))
+                .route("auth-service", route -> route.path("/api/v1/auth/**")
+                        .uri("lb://auth-service"))
                 .build();
     }
 }

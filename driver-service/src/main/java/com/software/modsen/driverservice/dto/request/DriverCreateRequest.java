@@ -19,8 +19,6 @@ import static com.software.modsen.driverservice.util.CustomValidatePatterns.PHON
 @NoArgsConstructor
 @Builder
 public class DriverCreateRequest {
-    private Long car;
-
     @Pattern(regexp = NAME_PATTERN, message = "Incorrect firstname")
     @Schema(defaultValue = "firstname")
     private String firstname;

@@ -18,7 +18,8 @@
             <column name="car_id" type="bigint">
                 <constraints foreignKeyName="drivers_cars_fk"
                              referencedTableName="cars"
-                             referencedColumnNames="car_id"/>
+                             referencedColumnNames="car_id"
+                             nullable="true"/>
             </column>
             <column name="firstname" type="varchar"/>
             <column name="surname" type="varchar"/>
