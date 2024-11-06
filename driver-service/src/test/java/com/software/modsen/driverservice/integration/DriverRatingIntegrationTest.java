@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -70,7 +72,9 @@ public class DriverRatingIntegrationTest extends PostgresTestContainerSetup {
         driverRating.setDriver(driver);
         driverRatingRepository.save(driverRating);
 
-        mockMvc.perform(get(DRIVER_RATING_BASE_URL + "/{id}", driverRating.getDriver().getId()))
+        mockMvc.perform(get(DRIVER_RATING_BASE_URL + "/{id}", driverRating.getDriver().getId())
+                        .with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("ROLE_admin"))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.driverRating").value(DRIVER_RATING));
@@ -88,7 +92,8 @@ public class DriverRatingIntegrationTest extends PostgresTestContainerSetup {
         DriverRatingRequest request = DriverRatingTestEntities.getTestDriverRatingRequest(driver.getId());
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post(DRIVER_RATING_BASE_URL)
+        mockMvc.perform(post(DRIVER_RATING_BASE_URL).with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("ROLE_passenger")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk())

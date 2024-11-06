@@ -13,7 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class RideCreateRequest {
-    private Long passengerId;
     @NotBlank(message = "Incorrect address from where to leave")
     private String addressFrom;
     @NotBlank(message = "Incorrect address where to go")

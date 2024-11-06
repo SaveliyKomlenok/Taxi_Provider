@@ -22,13 +22,13 @@ Feature: Driver
   Scenario: Update a driver successfully
     Given A driver with id 1 exists and saved
     And A driver with email "test@example.com" and phone number "+375331234567" does not exist
-    When I update the driver
+    When I update the driver with id 1
     Then The driver should be updated successfully
 
   Scenario: Attempt to update a driver that already exists
     Given A driver with id 1 exists and saved
     And A driver with email "test@example.com" and phone number "+375331234567" already exists for update
-    When I update the driver
+    When I update the driver with id 1
     Then I should receive a DriverAlreadyExistsException
 
   Scenario: Change restrictions status for an existing driver

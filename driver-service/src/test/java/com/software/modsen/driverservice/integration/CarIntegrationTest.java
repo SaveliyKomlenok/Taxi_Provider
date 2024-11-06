@@ -1,6 +1,7 @@
 package com.software.modsen.driverservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.software.modsen.driverservice.dto.request.CarChangeStatusRequest;
 import com.software.modsen.driverservice.dto.request.CarCreateRequest;
 import com.software.modsen.driverservice.dto.request.CarUpdateRequest;
 import com.software.modsen.driverservice.entity.Car;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -56,7 +59,8 @@ public class CarIntegrationTest extends PostgresTestContainerSetup {
         carRepository.save(firstCar);
         carRepository.save(secondCar);
 
-        mockMvc.perform(get(CAR_BASE_URL))
+        mockMvc.perform(get(CAR_BASE_URL).with(SecurityMockMvcRequestPostProcessors.jwt()
+                .authorities(new SimpleGrantedAuthority("ROLE_admin"))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.carResponseList").isArray())
@@ -71,7 +75,8 @@ public class CarIntegrationTest extends PostgresTestContainerSetup {
         Car car = CarTestEntities.getCarForIT();
         carRepository.save(car);
 
-        mockMvc.perform(get(CAR_BASE_URL + "/{id}", car.getId()))
+        mockMvc.perform(get(CAR_BASE_URL + "/{id}", car.getId()).with(SecurityMockMvcRequestPostProcessors.jwt()
+                .authorities(new SimpleGrantedAuthority("ROLE_admin"))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.kind").value(CAR_KIND));
@@ -83,7 +88,8 @@ public class CarIntegrationTest extends PostgresTestContainerSetup {
         CarCreateRequest request = CarTestEntities.getCarCreateRequestForIT();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post(CAR_BASE_URL)
+        mockMvc.perform(post(CAR_BASE_URL).with(SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_admin")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
@@ -103,7 +109,8 @@ public class CarIntegrationTest extends PostgresTestContainerSetup {
         CarUpdateRequest request = CarTestEntities.getCarUpdateRequestForIT();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(put(CAR_BASE_URL)
+        mockMvc.perform(put(CAR_BASE_URL).with(SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_admin")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk())
@@ -119,7 +126,13 @@ public class CarIntegrationTest extends PostgresTestContainerSetup {
         Car car = CarTestEntities.getCarForIT();
         carRepository.save(car);
 
-        mockMvc.perform(put(CAR_BASE_URL + "/{id}", car.getId()))
+        CarChangeStatusRequest request = CarTestEntities.getCarChangeStatusRequest(car.getId());
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put(CAR_BASE_URL + "/restrict").with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("ROLE_admin")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
                 .andExpect(status().isOk());
 
         Car updatedCar = carRepository.findById(car.getId()).orElseThrow();

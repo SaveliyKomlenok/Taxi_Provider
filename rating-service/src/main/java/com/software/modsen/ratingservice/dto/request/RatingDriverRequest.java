@@ -15,7 +15,6 @@ import org.hibernate.validator.constraints.Range;
 public class RatingDriverRequest {
     private Long rideId;
     private Long driverId;
-    private Long passengerId;
     @Range(min = 0, max = 5, message = "Incorrect rating")
     private Integer driverRating;
     private String comment;

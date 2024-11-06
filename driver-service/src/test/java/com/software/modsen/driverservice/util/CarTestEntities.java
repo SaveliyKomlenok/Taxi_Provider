@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.util;
 
+import com.software.modsen.driverservice.dto.request.CarChangeStatusRequest;
 import com.software.modsen.driverservice.dto.request.CarCreateRequest;
 import com.software.modsen.driverservice.dto.request.CarUpdateRequest;
 import com.software.modsen.driverservice.entity.Car;
@@ -39,6 +40,13 @@ public class CarTestEntities {
                 .kind(CAR_KIND)
                 .color(CAR_COLOR)
                 .restricted(CAR_NOT_RESTRICT)
+                .build();
+    }
+
+    public CarChangeStatusRequest getCarChangeStatusRequest(Long id) {
+        return CarChangeStatusRequest.builder()
+                .id(id)
+                .status(true)
                 .build();
     }
 

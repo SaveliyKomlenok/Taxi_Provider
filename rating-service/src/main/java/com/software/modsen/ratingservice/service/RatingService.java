@@ -8,5 +8,5 @@ import java.util.List;
 public interface RatingService {
     List<Rating> getAll(Integer pageNumber, Integer pageSize, String sortBy);
     Rating ratingPassenger(Rating rating);
-    Rating ratingDriver(RatingDriverRequest request);
+    Rating ratingDriver(Long passengerId, RatingDriverRequest request);
 }

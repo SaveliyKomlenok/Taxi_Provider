@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.service.impl;
 
+import com.software.modsen.driverservice.dto.request.CarChangeStatusRequest;
 import com.software.modsen.driverservice.entity.Car;
 import com.software.modsen.driverservice.exception.CarAlreadyExistsException;
 import com.software.modsen.driverservice.exception.CarNotExistsException;
@@ -56,9 +57,9 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Car changeRestrictionsStatus(Long id) {
-        Car car = getOrThrow(id);
-        car.setRestricted(!car.isRestricted());
+    public Car changeRestrictionsStatus(CarChangeStatusRequest request) {
+        Car car = getOrThrow(request.getId());
+        car.setRestricted(request.isStatus());
         return carRepository.save(car);
     }
 

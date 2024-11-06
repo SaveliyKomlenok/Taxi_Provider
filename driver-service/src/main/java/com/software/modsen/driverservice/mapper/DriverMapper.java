@@ -33,14 +33,11 @@ public class DriverMapper {
                 .id(request.getCar())
                 .build();
         return Driver.builder()
-                .id(request.getId())
                 .car(car)
                 .firstname(request.getFirstname())
                 .surname(request.getSurname())
                 .patronymic(request.getPatronymic())
-                .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
-                .gender(request.getGender())
                 .build();
     }
 

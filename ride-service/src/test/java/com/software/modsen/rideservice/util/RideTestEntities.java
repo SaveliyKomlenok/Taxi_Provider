@@ -65,13 +65,14 @@ public class RideTestEntities {
                 .id(DRIVER_ID)
                 .email(DEFAULT_EMAIL)
                 .phoneNumber(DEFAULT_PHONE_NUMBER)
+                .isRestricted(false)
+                .isBusy(false)
                 .build();
     }
 
     public RideFinishRequest getTestRideFinishRequest() {
         return RideFinishRequest.builder()
                 .rideId(RIDE_ID)
-                .driverId(DRIVER_ID)
                 .passengerRating(PASSENGER_RATING)
                 .build();
     }
@@ -79,14 +80,12 @@ public class RideTestEntities {
     public RideCancelRequest getTestRideCancelRequest() {
         return RideCancelRequest.builder()
                 .rideId(RIDE_ID)
-                .passengerId(PASSENGER_ID)
                 .build();
     }
 
     public RideStatusChangeRequest getTestRideStatusChangeRequest() {
         return RideStatusChangeRequest.builder()
                 .rideId(RIDE_ID)
-                .driverId(DRIVER_ID)
                 .build();
     }
 }

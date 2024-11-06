@@ -1,6 +1,7 @@
 package com.software.modsen.rideservice.service.impl;
 
 import com.software.modsen.rideservice.client.DriverClient;
+import com.software.modsen.rideservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.rideservice.dto.response.DriverResponse;
 import com.software.modsen.rideservice.exception.ServiceNotAvailableException;
 import com.software.modsen.rideservice.service.DriverService;
@@ -30,8 +31,8 @@ public class DriverServiceImpl implements DriverService {
     @Override
     @Retry(name = CHANGE_BUSY_STATUS_DRIVER)
     @CircuitBreaker(name = CHANGE_BUSY_STATUS_DRIVER, fallbackMethod = "fallBackChangeBusyStatus")
-    public DriverResponse changeBusyStatus(Long driverId) {
-        return driverClient.changeBusyStatus(driverId);
+    public DriverResponse changeBusyStatus(DriverChangeStatusRequest request) {
+        return driverClient.changeBusyStatus(request);
     }
 
     private DriverResponse fallBackGetDriverById(Throwable throwable) {

@@ -49,11 +49,11 @@ public class RatingServiceImpl implements RatingService {
     }
 
     @Override
-    public Rating ratingDriver(RatingDriverRequest request) {
+    public Rating ratingDriver(Long passengerId, RatingDriverRequest request) {
         Rating rating = ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                         request.getRideId(),
                         request.getDriverId(),
-                        request.getPassengerId())
+                        passengerId)
                 .orElseThrow(() -> new RatingDriverException(String.format(DRIVER_NOT_RATED, request.getDriverId())));
         if (rating.getDriverRating() != null) {
             throw new DriverAlreadyHasRatingException(String.format(DRIVER_HAS_RATING, rating.getDriverId()));

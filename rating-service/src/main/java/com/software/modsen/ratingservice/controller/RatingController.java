@@ -11,6 +11,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +24,7 @@ public class RatingController {
     private final RatingMapper ratingMapper;
 
     @GetMapping
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<RatingListResponse> getAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber,
                                                      @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                      @RequestParam(required = false, defaultValue = "id") String sortBy) {
@@ -28,14 +32,17 @@ public class RatingController {
     }
 
     @PostMapping("/passenger")
+    @PreAuthorize("hasRole('driver')")
     public ResponseEntity<RatingResponse> ratedPassenger(@RequestBody @Valid RatingPassengerRequest request) {
         Rating rating = ratingService.ratingPassenger(ratingMapper.toEntity(request));
         return new ResponseEntity<>(ratingMapper.toResponse(rating), HttpStatus.CREATED);
     }
 
     @PutMapping("/driver")
-    public ResponseEntity<RatingResponse> ratedDriver(@RequestBody @Valid RatingDriverRequest request) {
-        Rating rating = ratingService.ratingDriver(request);
+    @PreAuthorize("hasRole('passenger')")
+    public ResponseEntity<RatingResponse> ratedDriver(@RequestBody @Valid RatingDriverRequest request, @AuthenticationPrincipal Jwt jwt) {
+        Long id = Long.valueOf(jwt.getClaim("userId"));
+        Rating rating = ratingService.ratingDriver(id, request);
         return new ResponseEntity<>(ratingMapper.toResponse(rating), HttpStatus.OK);
     }
 }

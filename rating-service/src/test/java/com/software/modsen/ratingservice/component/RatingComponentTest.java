@@ -18,6 +18,7 @@ import org.mockito.Mock;
 
 import java.util.Optional;
 
+import static com.software.modsen.ratingservice.util.RatingTestEntities.PASSENGER_ID;
 import static com.software.modsen.ratingservice.util.RatingTestEntities.PASSENGER_RATING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -71,7 +72,7 @@ public class RatingComponentTest {
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 driverRatingRequest.getRideId(),
                 driverRatingRequest.getDriverId(),
-                driverRatingRequest.getPassengerId()))
+                PASSENGER_ID))
                 .thenReturn(Optional.of(rating));
         when(ratingRepository.save(any(Rating.class))).thenReturn(rating);
     }
@@ -84,7 +85,7 @@ public class RatingComponentTest {
     @When("I save the driver rating")
     public void iSaveTheDriverRating() {
         try {
-            rating = ratingService.ratingDriver(driverRatingRequest);
+            rating = ratingService.ratingDriver(PASSENGER_ID, driverRatingRequest);
         } catch (DriverAlreadyHasRatingException | RatingDriverException e){
             exception = e;
         }
@@ -104,7 +105,7 @@ public class RatingComponentTest {
 
     @Then("I should receive a DriverAlreadyHasRatingException")
     public void iShouldReceiveADriverAlreadyHasRatingException() {
-        assertThrows(DriverAlreadyHasRatingException.class, () -> ratingService.ratingDriver(driverRatingRequest));
+        assertThrows(DriverAlreadyHasRatingException.class, () -> ratingService.ratingDriver(PASSENGER_ID, driverRatingRequest));
         verify(ratingRepository, never()).save(any());
     }
 
@@ -113,13 +114,13 @@ public class RatingComponentTest {
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 driverRatingRequest.getRideId(),
                 driverRatingRequest.getDriverId(),
-                driverRatingRequest.getPassengerId()))
+                PASSENGER_ID))
                 .thenReturn(Optional.empty());
     }
 
     @Then("I should receive a RatingDriverException")
     public void iShouldReceiveARatingDriverException() {
-        assertThrows(RatingDriverException.class, () -> ratingService.ratingDriver(driverRatingRequest));
+        assertThrows(RatingDriverException.class, () -> ratingService.ratingDriver(PASSENGER_ID, driverRatingRequest));
         verify(ratingRepository, never()).save(any());
     }
 }

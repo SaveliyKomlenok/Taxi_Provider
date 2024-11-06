@@ -17,7 +17,6 @@ public class RideMapper {
 
     public Ride toEntity(RideCreateRequest request){
         return Ride.builder()
-                .passengerId(request.getPassengerId())
                 .addressFrom(request.getAddressFrom())
                 .addressTo(request.getAddressTo())
                 .build();

@@ -105,9 +105,8 @@ object TestEntities {
         )
     }
 
-    fun getPassengerUpdateRequestForIT(id: Long?): PassengerUpdateRequest {
+    fun getPassengerUpdateRequestForIT(): PassengerUpdateRequest {
         return PassengerUpdateRequest(
-            id = id,
             firstname = PASSENGER_FIRSTNAME,
             surname = PASSENGER_SURNAME,
             patronymic = PASSENGER_PATRONYMIC,

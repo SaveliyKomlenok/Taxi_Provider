@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +28,9 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
 
     @Value("${jwt.auth.converter.resource-id}")
     private String resourceId;
+
+    @Value("${jwt.auth.converter.client-resource-id}")
+    private String clientResourceId;
 
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
@@ -52,7 +56,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt jwt) {
         Map<String, Object> resourceAccess;
         Map<String, Object> resource;
-        Collection<String> resourceRoles;
+        List<String> resourceRoles;
         if (jwt.getClaim("resource_access") == null) {
             return Set.of();
         }
@@ -62,8 +66,13 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
             return Set.of();
         }
         resource = (Map<String, Object>) resourceAccess.get(resourceId);
+        resourceRoles = (List<String>) resource.get("roles");
 
-        resourceRoles = (Collection<String>) resource.get("roles");
+        if (!resourceRoles.get(0).equals("admin") && !resourceRoles.get(0).equals("driver") && !resourceRoles.get(0).equals("passenger")) {
+            resource = (Map<String, Object>) resourceAccess.get(clientResourceId);
+        }
+        resourceRoles = (List<String>) resource.get("roles");
+
         return resourceRoles
                 .stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))

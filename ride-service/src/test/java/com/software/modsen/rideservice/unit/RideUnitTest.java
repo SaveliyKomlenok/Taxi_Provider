@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.software.modsen.rideservice.util.RideTestEntities.DRIVER_ID;
 import static com.software.modsen.rideservice.util.RideTestEntities.EXPECTED_LIST_SIZE;
 import static com.software.modsen.rideservice.util.RideTestEntities.FIRST_INDEX;
 import static com.software.modsen.rideservice.util.RideTestEntities.PAGE_NUMBER;
@@ -110,7 +111,7 @@ public class RideUnitTest {
         when(passengerService.getPassengerById(PASSENGER_ID)).thenReturn(passenger);
         when(rideRepository.save(any(Ride.class))).thenReturn(ride);
 
-        Ride result = rideService.create(ride);
+        Ride result = rideService.create(PASSENGER_ID, ride);
 
         assertEquals(ride, result);
         verify(rideRepository).save(ride);
@@ -121,7 +122,7 @@ public class RideUnitTest {
         PassengerResponse restrictedPassenger = RideTestEntities.getTestRestrictedPassenger();
         when(passengerService.getPassengerById(PASSENGER_ID)).thenReturn(restrictedPassenger);
 
-        assertThrows(PassengerRestrictedException.class, () -> rideService.create(ride));
+        assertThrows(PassengerRestrictedException.class, () -> rideService.create(PASSENGER_ID, ride));
         verify(rideRepository, never()).save(any(Ride.class));
     }
 
@@ -130,10 +131,10 @@ public class RideUnitTest {
         RideStatusChangeRequest request = RideTestEntities.getTestRideStatusChangeRequest();
         when(rideRepository.findRideByIdAndStatusEquals(request.getRideId(), Status.CREATED))
                 .thenReturn(Optional.of(ride));
-        when(driverService.getDriverById(request.getDriverId())).thenReturn(driver);
+        when(driverService.getDriverById(DRIVER_ID)).thenReturn(driver);
         when(rideRepository.save(any(Ride.class))).thenReturn(ride);
 
-        Ride result = rideService.accept(request);
+        Ride result = rideService.accept(DRIVER_ID, request);
 
         assertEquals(ride, result);
         verify(rideRepository).save(ride);
@@ -147,7 +148,7 @@ public class RideUnitTest {
                 .thenReturn(Optional.of(ride));
         when(driverService.getDriverById(ride.getDriverId())).thenReturn(driver);
 
-        assertThrows(RideAcceptException.class, () -> rideService.accept(request));
+        assertThrows(RideAcceptException.class, () -> rideService.accept(DRIVER_ID, request));
         verify(rideRepository, never()).save(any(Ride.class));
     }
 
@@ -155,11 +156,11 @@ public class RideUnitTest {
     void finish_ShouldReturnRide_WhenFinishedSuccessfully() {
         RideFinishRequest request = RideTestEntities.getTestRideFinishRequest();
         ride.setStatus(Status.ON_WAY_TO_DESTINATION);
-        when(rideRepository.findRideByIdAndDriverIdAndStatusEquals(request.getRideId(), request.getDriverId(), Status.ON_WAY_TO_DESTINATION))
+        when(rideRepository.findRideByIdAndDriverIdAndStatusEquals(request.getRideId(), DRIVER_ID, Status.ON_WAY_TO_DESTINATION))
                 .thenReturn(Optional.of(ride));
         when(rideRepository.save(any(Ride.class))).thenReturn(ride);
 
-        Ride result = rideService.finish(request);
+        Ride result = rideService.finish(DRIVER_ID, request);
 
         assertEquals(ride, result);
         verify(rideRepository).save(ride);
@@ -168,10 +169,10 @@ public class RideUnitTest {
     @Test
     void finish_ShouldThrowException_WhenRideCannotBeFinished() {
         RideFinishRequest request = RideTestEntities.getTestRideFinishRequest();
-        when(rideRepository.findRideByIdAndDriverIdAndStatusEquals(request.getRideId(), request.getDriverId(), Status.ON_WAY_TO_DESTINATION))
+        when(rideRepository.findRideByIdAndDriverIdAndStatusEquals(request.getRideId(), DRIVER_ID, Status.ON_WAY_TO_DESTINATION))
                 .thenReturn(Optional.empty());
 
-        assertThrows(RideFinishException.class, () -> rideService.finish(request));
+        assertThrows(RideFinishException.class, () -> rideService.finish(DRIVER_ID, request));
         verify(rideRepository, never()).save(any(Ride.class));
     }
 
@@ -179,11 +180,11 @@ public class RideUnitTest {
     void cancel_ShouldReturnRide_WhenCanceledSuccessfully() {
         RideCancelRequest request = RideTestEntities.getTestRideCancelRequest();
         ride.setStatus(Status.CREATED);
-        when(rideRepository.findRideByIdAndPassengerIdAndStatusEqualsOrStatusEquals(request.getRideId(), request.getPassengerId(), Status.CREATED, Status.ACCEPTED))
+        when(rideRepository.findRideByIdAndPassengerIdAndStatusEqualsOrStatusEquals(request.getRideId(), PASSENGER_ID, Status.CREATED, Status.ACCEPTED))
                 .thenReturn(Optional.of(ride));
         when(rideRepository.save(any(Ride.class))).thenReturn(ride);
 
-        Ride result = rideService.cancel(request);
+        Ride result = rideService.cancel(PASSENGER_ID, request);
 
         assertEquals(ride, result);
         verify(rideRepository).save(ride);
@@ -192,10 +193,10 @@ public class RideUnitTest {
     @Test
     void cancel_ShouldThrowException_WhenRideCannotBeCanceled() {
         RideCancelRequest request = RideTestEntities.getTestRideCancelRequest();
-        when(rideRepository.findRideByIdAndPassengerIdAndStatusEqualsOrStatusEquals(request.getRideId(), request.getPassengerId(), Status.CREATED, Status.ACCEPTED))
+        when(rideRepository.findRideByIdAndPassengerIdAndStatusEqualsOrStatusEquals(request.getRideId(), PASSENGER_ID, Status.CREATED, Status.ACCEPTED))
                 .thenReturn(Optional.empty());
 
-        assertThrows(RideCancelException.class, () -> rideService.cancel(request));
+        assertThrows(RideCancelException.class, () -> rideService.cancel(PASSENGER_ID, request));
         verify(rideRepository, never()).save(any(Ride.class));
     }
 
@@ -203,11 +204,11 @@ public class RideUnitTest {
     void changeStatus_ShouldChangeRideStatus_WhenStatusIsChangedSuccessfully() {
         RideStatusChangeRequest request = RideTestEntities.getTestRideStatusChangeRequest();
         ride.setStatus(Status.ACCEPTED);
-        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), request.getDriverId(), Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
+        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), DRIVER_ID, Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
                 .thenReturn(Optional.of(ride));
         when(rideRepository.save(any(Ride.class))).thenReturn(ride);
 
-        Ride result = rideService.changeStatus(request);
+        Ride result = rideService.changeStatus(DRIVER_ID, request);
 
         assertEquals(Status.ON_WAY_FOR_PASSENGER, result.getStatus());
         verify(rideRepository).save(ride);
@@ -217,11 +218,11 @@ public class RideUnitTest {
     void changeStatus_ShouldChangeToDestination_WhenCurrentStatusIsOnWayForPassenger() {
         RideStatusChangeRequest request = RideTestEntities.getTestRideStatusChangeRequest();
         ride.setStatus(Status.ON_WAY_FOR_PASSENGER);
-        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), request.getDriverId(), Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
+        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), DRIVER_ID, Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
                 .thenReturn(Optional.of(ride));
         when(rideRepository.save(any(Ride.class))).thenReturn(ride);
 
-        Ride result = rideService.changeStatus(request);
+        Ride result = rideService.changeStatus(DRIVER_ID, request);
 
         assertEquals(Status.ON_WAY_TO_DESTINATION, result.getStatus());
         verify(rideRepository).save(ride);
@@ -230,10 +231,10 @@ public class RideUnitTest {
     @Test
     void changeStatus_ShouldThrowException_WhenRideIsNotFound() {
         RideStatusChangeRequest request = RideTestEntities.getTestRideStatusChangeRequest();
-        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), request.getDriverId(), Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
+        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), DRIVER_ID, Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
                 .thenReturn(Optional.empty());
 
-        assertThrows(RideChangeStatusException.class, () -> rideService.changeStatus(request));
+        assertThrows(RideChangeStatusException.class, () -> rideService.changeStatus(DRIVER_ID, request));
         verify(rideRepository, never()).save(any(Ride.class));
     }
 
@@ -241,10 +242,10 @@ public class RideUnitTest {
     void changeStatus_ShouldThrowException_WhenInvalidStatus() {
         RideStatusChangeRequest request = RideTestEntities.getTestRideStatusChangeRequest();
         ride.setStatus(Status.FINISHED);
-        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), request.getDriverId(), Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
+        when(rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(request.getRideId(), DRIVER_ID, Status.ACCEPTED, Status.ON_WAY_FOR_PASSENGER))
                 .thenReturn(Optional.of(ride));
 
-        assertThrows(RideChangeStatusException.class, () -> rideService.changeStatus(request));
+        assertThrows(RideChangeStatusException.class, () -> rideService.changeStatus(DRIVER_ID, request));
         verify(rideRepository, never()).save(any(Ride.class));
     }
 }

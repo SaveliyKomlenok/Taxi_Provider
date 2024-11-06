@@ -14,6 +14,12 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/main-changelog.xml
     enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/taxi_provider_realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
 server:
   port: 8083
@@ -77,3 +83,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+jwt:
+  auth:
+    converter:
+      resource-id: taxi_provider_auth
+      client-resource-id: realm-management
+      principal-attribute: preferred_username

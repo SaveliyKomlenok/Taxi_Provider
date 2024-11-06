@@ -12,6 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class RideStatusChangeRequest {
-    private Long driverId;
     private Long rideId;
 }

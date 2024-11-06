@@ -24,7 +24,7 @@ class PassengerMapper {
 
     fun toEntity(request: PassengerUpdateRequest): Passenger {
         return Passenger(
-            id = request.id,
+            id = null,
             firstname = request.firstname,
             surname = request.surname,
             patronymic = request.patronymic,

@@ -42,4 +42,5 @@ jwt:
   auth:
     converter:
       resource-id: taxi_provider_auth
+      client-resource-id: realm-management
       principal-attribute: preferred_username
