@@ -27,7 +27,7 @@ spec:
             - name: SPRING_DATASOURCE_PASSWORD
               value: skademon
             - name: EUREKA_INSTANCE_HOSTNAME
-              value: ride-service
+              value: rating-service
           ports:
             - containerPort: 8084
 ---
