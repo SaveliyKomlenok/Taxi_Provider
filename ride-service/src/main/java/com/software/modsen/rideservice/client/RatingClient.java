@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(value = "${service.rating.name}", path = "${service.rating.url}", configuration = FeignConfig.class)
 public interface RatingClient {
     @RequestMapping(method = RequestMethod.POST, value = "/passenger", produces = "application/json")
-    RatingResponse rateByDriver(@RequestBody RatingPassengerRequest request);
+    RatingResponse ratedPassenger(@RequestBody RatingPassengerRequest request);
 }

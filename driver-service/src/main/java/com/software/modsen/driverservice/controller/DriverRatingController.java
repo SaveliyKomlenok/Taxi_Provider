@@ -9,7 +9,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,12 +25,14 @@ public class DriverRatingController {
     private final DriverRatingMapper driverRatingMapper;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('admin', 'driver', 'passenger')")
     public ResponseEntity<DriverRatingResponse> getDriverRating(@PathVariable Long id){
         DriverRating driverRating = driverRatingService.getByDriverId(id);
         return new ResponseEntity<>(driverRatingMapper.toResponse(driverRating), HttpStatus.OK);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('passenger')")
     public ResponseEntity<DriverRatingResponse> save(@RequestBody @Valid DriverRatingRequest request){
         DriverRating driverRating = driverRatingService.save(driverRatingMapper.toEntity(request));
         return new ResponseEntity<>(driverRatingMapper.toResponse(driverRating), HttpStatus.OK);

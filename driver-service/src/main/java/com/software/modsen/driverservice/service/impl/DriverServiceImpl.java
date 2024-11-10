@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.service.impl;
 
+import com.software.modsen.driverservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.driverservice.entity.Car;
 import com.software.modsen.driverservice.entity.Driver;
 import com.software.modsen.driverservice.exception.CarOccupiedException;
@@ -44,20 +45,12 @@ public class DriverServiceImpl implements DriverService {
                 driver.getPhoneNumber()).isPresent()){
             throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
         }
-        driver.setCar(checkCarOccupancy(driver.getCar().getId()));
         return driverRepository.save(driver);
     }
 
-    private Car checkCarOccupancy(Long id) {
-        Car car = carService.getById(id);
-        if (driverRepository.findDriverByCarId(id).isPresent()) {
-            throw new CarOccupiedException(String.format(CAR_OCCUPIED, id));
-        }
-        return car;
-    }
-
     @Override
-    public Driver update(Driver driver) {
+    public Driver update(Long id, Driver driver) {
+        driver.setId(id);
         getOrThrow(driver.getId());
         Driver existingDriver = driverRepository.findDriverByEmailAndPhoneNumber(
                         driver.getEmail(),
@@ -81,16 +74,16 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public Driver changeRestrictionsStatus(Long id) {
-        Driver driver = getOrThrow(id);
-        driver.setRestricted(!driver.isRestricted());
+    public Driver changeRestrictionsStatus(DriverChangeStatusRequest request) {
+        Driver driver = getOrThrow(request.getId());
+        driver.setRestricted(request.isStatus());
         return driverRepository.save(driver);
     }
 
     @Override
-    public Driver changeBusyStatus(Long id) {
-        Driver driver = getOrThrow(id);
-        driver.setBusy(!driver.isBusy());
+    public Driver changeBusyStatus(DriverChangeStatusRequest request) {
+        Driver driver = getOrThrow(request.getId());
+        driver.setBusy(request.isStatus());
         return driverRepository.save(driver);
     }
 

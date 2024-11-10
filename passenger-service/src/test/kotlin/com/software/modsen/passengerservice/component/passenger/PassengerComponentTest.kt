@@ -114,10 +114,10 @@ class PassengerComponentTest {
         `when`(passengerRepository.save(passenger)).thenReturn(passenger)
     }
 
-    @When("I update the passenger")
-    fun iUpdateThePassenger() {
+    @When("I update the passenger with id {long}")
+    fun iUpdateThePassenger(id: Long) {
         try {
-            passenger = passengerService.update(passenger)
+            passenger = passengerService.update(id, passenger)
         } catch (e: PassengerAlreadyExistsException) {
             exception = e
         }

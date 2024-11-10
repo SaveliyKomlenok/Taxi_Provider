@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.unit;
 
+import com.software.modsen.driverservice.dto.request.CarChangeStatusRequest;
 import com.software.modsen.driverservice.entity.Car;
 import com.software.modsen.driverservice.exception.CarAlreadyExistsException;
 import com.software.modsen.driverservice.exception.CarNotExistsException;
@@ -135,11 +136,12 @@ public class CarUnitTest {
 
     @Test
     void changeRestrictionsStatus_ShouldChangeStatus_WhenCarExists() {
+        CarChangeStatusRequest request = CarTestEntities.getCarChangeStatusRequest(CAR_ID);
         when(carRepository.findById(CAR_ID))
                 .thenReturn(Optional.of(car));
         when(carRepository.save(car)).thenReturn(car);
 
-        Car updatedCar = carService.changeRestrictionsStatus(CAR_ID);
+        Car updatedCar = carService.changeRestrictionsStatus(request);
 
         assertTrue(updatedCar.isRestricted());
         verify(carRepository, times(WANTED_NUMBER_OF_INVOCATIONS)).save(car);
@@ -147,10 +149,11 @@ public class CarUnitTest {
 
     @Test
     void changeRestrictionsStatus_ShouldThrowException_WhenCarDoesNotExist() {
+        CarChangeStatusRequest request = CarTestEntities.getCarChangeStatusRequest(CAR_ID);
         when(carRepository.findById(CAR_ID))
                 .thenReturn(Optional.empty());
 
-        assertThrows(CarNotExistsException.class, () -> carService.changeRestrictionsStatus(CAR_ID));
+        assertThrows(CarNotExistsException.class, () -> carService.changeRestrictionsStatus(request));
         verify(carRepository, never()).save(any());
     }
 }

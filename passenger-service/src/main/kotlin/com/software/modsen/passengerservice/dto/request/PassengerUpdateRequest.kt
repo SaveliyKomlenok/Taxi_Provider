@@ -8,8 +8,6 @@ import com.software.modsen.passengerservice.util.CustomValidatePatterns.PHONE_NU
 
 @Schema(description = "Data for update passenger")
 data class PassengerUpdateRequest(
-    val id: Long? = null,
-
     @field:Pattern(regexp = NAME_PATTERN, message = "Incorrect firstname")
     @field:Schema(defaultValue = "firstname")
     val firstname: String,

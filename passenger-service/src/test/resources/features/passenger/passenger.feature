@@ -22,13 +22,13 @@ Feature: Passenger
   Scenario: Update a passenger successfully
     Given A passenger with id 1 exists and saved
     And A passenger with email "test@example.com" and phone number "+375331234567" does not exist
-    When I update the passenger
+    When I update the passenger with id 1
     Then The passenger should be updated successfully
 
   Scenario: Attempt to update a passenger that already exists
     Given A passenger with id 1 exists and saved
     And A passenger with email "test@example.com" and phone number "+375331234567" already exists for update
-    When I update the passenger
+    When I update the passenger with id 1
     Then I should receive a PassengerAlreadyExistsException
 
   Scenario: Change restrictions status for an existing passenger

@@ -103,7 +103,7 @@ class PassengerUnitTest {
             .thenReturn(null)
         `when`(passengerRepository.save(passenger)).thenReturn(passenger)
 
-        val result = passengerService.update(passenger)
+        val result = passengerService.update(TestEntities.PASSENGER_ID, passenger)
 
         assertEquals(passenger, result)
         verify(passengerRepository).save(passenger)
@@ -117,7 +117,7 @@ class PassengerUnitTest {
             .thenReturn(secondPassenger)
 
         assertFailsWith<PassengerAlreadyExistsException> {
-            passengerService.update(passenger)
+            passengerService.update(TestEntities.PASSENGER_ID, passenger)
         }
         verify(passengerRepository, never()).save(any())
     }

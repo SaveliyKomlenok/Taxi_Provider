@@ -139,7 +139,7 @@ public class CarComponentTest {
     @When("I change the restrictions status of the car with id {long}")
     public void iChangeTheRestrictionsStatusOfTheCar(Long id) {
         try {
-            car = carService.changeRestrictionsStatus(id);
+            car = carService.changeRestrictionsStatus(CarTestEntities.getCarChangeStatusRequest(id));
         } catch (CarNotExistsException e) {
             exception = e;
         }

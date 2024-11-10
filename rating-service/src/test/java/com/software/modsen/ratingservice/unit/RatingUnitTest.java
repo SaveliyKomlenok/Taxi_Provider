@@ -91,11 +91,11 @@ public class RatingUnitTest {
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 request.getRideId(),
                 request.getDriverId(),
-                request.getPassengerId()))
+                PASSENGER_ID))
                 .thenReturn(Optional.of(rating));
         when(ratingRepository.save(any(Rating.class))).thenReturn(rating);
 
-        Rating result = ratingService.ratingDriver(request);
+        Rating result = ratingService.ratingDriver(PASSENGER_ID, request);
 
         assertEquals(rating, result);
         verify(ratingRepository).save(rating);
@@ -109,10 +109,10 @@ public class RatingUnitTest {
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 request.getRideId(),
                 request.getDriverId(),
-                request.getPassengerId()))
+                PASSENGER_ID))
                 .thenReturn(Optional.of(rating));
 
-        assertThrows(DriverAlreadyHasRatingException.class, () -> ratingService.ratingDriver(request));
+        assertThrows(DriverAlreadyHasRatingException.class, () -> ratingService.ratingDriver(PASSENGER_ID, request));
         verify(ratingRepository, never()).save(any());
     }
 
@@ -122,10 +122,10 @@ public class RatingUnitTest {
         when(ratingRepository.findRatingByRideIdAndDriverIdAndPassengerId(
                 request.getRideId(),
                 request.getDriverId(),
-                request.getPassengerId()))
+                PASSENGER_ID))
                 .thenReturn(Optional.empty());
 
-        assertThrows(RatingDriverException.class, () -> ratingService.ratingDriver(request));
+        assertThrows(RatingDriverException.class, () -> ratingService.ratingDriver(PASSENGER_ID, request));
         verify(ratingRepository, never()).save(any());
     }
 

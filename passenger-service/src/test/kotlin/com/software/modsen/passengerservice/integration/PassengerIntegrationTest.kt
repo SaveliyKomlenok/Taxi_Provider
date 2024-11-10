@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,7 +45,12 @@ class PassengerIntegrationTest : PostgresTestContainerSetup() {
         passengerRepository.save(firstPassenger)
         passengerRepository.save(secondPassenger)
 
-        mockMvc.perform(get(TestEntities.PASSENGER_BASE_URL))
+        mockMvc.perform(
+            get(TestEntities.PASSENGER_BASE_URL).with(
+                SecurityMockMvcRequestPostProcessors.jwt()
+                    .authorities(SimpleGrantedAuthority("ROLE_admin"))
+            )
+        )
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.items").isArray)
@@ -55,7 +64,12 @@ class PassengerIntegrationTest : PostgresTestContainerSetup() {
         val passenger = TestEntities.getPassengerForIT()
         passengerRepository.save(passenger)
 
-        mockMvc.perform(get("${TestEntities.PASSENGER_BASE_URL}/{id}", passenger.id))
+        mockMvc.perform(
+            get("${TestEntities.PASSENGER_BASE_URL}/{id}", passenger.id).with(
+                SecurityMockMvcRequestPostProcessors.jwt()
+                    .authorities(SimpleGrantedAuthority("ROLE_admin"))
+            )
+        )
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.email").value(TestEntities.PASSENGER_EMAIL))
@@ -66,9 +80,14 @@ class PassengerIntegrationTest : PostgresTestContainerSetup() {
         val request = TestEntities.getPassengerCreateRequestForIT()
         val jsonRequest = objectMapper.writeValueAsString(request)
 
-        mockMvc.perform(post(TestEntities.PASSENGER_BASE_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonRequest))
+        mockMvc.perform(
+            post(TestEntities.PASSENGER_BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequest).with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(SimpleGrantedAuthority("ROLE_realm-admin"))
+                )
+        )
             .andExpect(status().isCreated)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
 
@@ -80,15 +99,21 @@ class PassengerIntegrationTest : PostgresTestContainerSetup() {
 
     @Test
     fun `test update passenger`() {
-        val passenger = TestEntities.getPassengerForIT()
+        val passenger = TestEntities.getSecondPassengerForIT()
         passengerRepository.save(passenger)
 
-        val request = TestEntities.getPassengerUpdateRequestForIT(passenger.id)
+        val request = TestEntities.getPassengerUpdateRequestForIT()
         val jsonRequest = objectMapper.writeValueAsString(request)
 
-        mockMvc.perform(put(TestEntities.PASSENGER_BASE_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonRequest))
+        mockMvc.perform(
+            put(TestEntities.PASSENGER_BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequest).with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(SimpleGrantedAuthority("ROLE_passenger"))
+                        .jwt { jwt -> jwt.claim("userId", passenger.id.toString()) }
+                )
+        )
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
 
@@ -104,9 +129,14 @@ class PassengerIntegrationTest : PostgresTestContainerSetup() {
         val request = TestEntities.getTestPassengerChangeStatusRequest(passenger.id)
         val jsonRequest = objectMapper.writeValueAsString(request)
 
-        mockMvc.perform(put("${TestEntities.PASSENGER_BASE_URL}/status")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonRequest))
+        mockMvc.perform(
+            put("${TestEntities.PASSENGER_BASE_URL}/restrict")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequest).with(
+                    SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(SimpleGrantedAuthority("ROLE_admin"))
+                )
+        )
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
 

@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: auth-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/taxi_provider_realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+server:
+  port: 8085
+  forward-headers-strategy: framework
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+eureka:
+  instance:
+    hostname: auth-service
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+service:
+  passenger:
+    name: passenger-service
+    url: /api/v1/passengers
+  driver:
+    name: driver-service
+    url: /api/v1/drivers
+
+jwt:
+  auth:
+    grant-type: password
+    client-grant-type: client_credentials
+    client-id: taxi_provider_auth
+    client-secret: wA4aMhSOsstBhNZ2oPCgv62ChxtYvohf
+    client-url-id: 047d34a2-f222-4e8b-9891-b35ee3a4b171
+    token: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/token
+    register-url: http://localhost:8180/admin/realms/taxi_provider_realm/users
+    get-driver-role-url: http://localhost:8180/admin/realms/taxi_provider_realm/clients/${jwt.auth.client-url-id}/roles/driver
+    get-passenger-role-url: http://localhost:8180/admin/realms/taxi_provider_realm/clients/${jwt.auth.client-url-id}/roles/passenger
+    get-user-url: http://localhost:8180/admin/realms/taxi_provider_realm/users/
+    map-role-url: http://localhost:8180/admin/realms/taxi_provider_realm/users/%s/role-mappings/clients/${jwt.auth.client-url-id}

@@ -1,6 +1,7 @@
 package com.software.modsen.driverservice.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.software.modsen.driverservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.driverservice.dto.request.DriverCreateRequest;
 import com.software.modsen.driverservice.dto.request.DriverUpdateRequest;
 import com.software.modsen.driverservice.entity.Car;
@@ -16,15 +17,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
 import static com.software.modsen.driverservice.util.DriverTestEntities.DRIVER_BASE_URL;
 import static com.software.modsen.driverservice.util.DriverTestEntities.DRIVER_EMAIL;
+import static com.software.modsen.driverservice.util.DriverTestEntities.DRIVER_ID;
 import static com.software.modsen.driverservice.util.DriverTestEntities.EXPECTED_LIST_SIZE;
 import static com.software.modsen.driverservice.util.DriverTestEntities.FIRST_INDEX;
 import static com.software.modsen.driverservice.util.DriverTestEntities.SECOND_DRIVER_EMAIL;
+import static com.software.modsen.driverservice.util.DriverTestEntities.SECOND_DRIVER_PHONE_NUMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,7 +66,8 @@ public class DriverIntegrationTest extends PostgresTestContainerSetup {
         driverRepository.save(firstDriver);
         driverRepository.save(secondDriver);
 
-        mockMvc.perform(get(DRIVER_BASE_URL))
+        mockMvc.perform(get(DRIVER_BASE_URL).with(SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_admin"))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.driverResponseList").isArray())
@@ -75,8 +81,8 @@ public class DriverIntegrationTest extends PostgresTestContainerSetup {
     public void testGetDriverById() {
         Driver driver = DriverTestEntities.getDriverForIT();
         driverRepository.save(driver);
-
-        mockMvc.perform(get(DRIVER_BASE_URL + "/{id}", driver.getId()))
+        mockMvc.perform(get(DRIVER_BASE_URL + "/" + DRIVER_ID).with(SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_driver"))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.email").value(DRIVER_EMAIL));
@@ -85,14 +91,11 @@ public class DriverIntegrationTest extends PostgresTestContainerSetup {
     @Test
     @SneakyThrows
     public void testCreateDriver() {
-        Car car = CarTestEntities.getCarForIT();
-        carRepository.save(car);
-
         DriverCreateRequest request = DriverTestEntities.getDriverCreateRequestForIT();
-        request.setCar(car.getId());
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post(DRIVER_BASE_URL)
+        mockMvc.perform(post(DRIVER_BASE_URL).with(SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_realm-admin")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated())
@@ -113,18 +116,18 @@ public class DriverIntegrationTest extends PostgresTestContainerSetup {
         driverRepository.save(driver);
 
         DriverUpdateRequest request = DriverTestEntities.getDriverUpdateRequestForIT();
-        request.setId(driver.getId());
         request.setCar(car.getId());
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(put(DRIVER_BASE_URL)
+        mockMvc.perform(put(DRIVER_BASE_URL).with(SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_driver")).jwt(jwt -> jwt.claim("userId", String.valueOf(driver.getId()))))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
         Driver updatedDriver = driverRepository.findById(driver.getId()).orElseThrow();
-        assertThat(updatedDriver.getEmail()).isEqualTo(SECOND_DRIVER_EMAIL);
+        assertThat(updatedDriver.getPhoneNumber()).isEqualTo(SECOND_DRIVER_PHONE_NUMBER);
     }
 
     @Test
@@ -133,7 +136,13 @@ public class DriverIntegrationTest extends PostgresTestContainerSetup {
         Driver driver = DriverTestEntities.getDriverForIT();
         driverRepository.save(driver);
 
-        mockMvc.perform(put(DRIVER_BASE_URL + "/restrict/{id}", driver.getId()))
+        DriverChangeStatusRequest request = DriverTestEntities.getDriverChangeStatusRequest(driver.getId());
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put(DRIVER_BASE_URL + "/restrict").with(SecurityMockMvcRequestPostProcessors.jwt()
+                        .authorities(new SimpleGrantedAuthority("ROLE_admin")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
                 .andExpect(status().isOk());
 
         Driver updatedDriver = driverRepository.findById(driver.getId()).orElseThrow();
@@ -146,7 +155,13 @@ public class DriverIntegrationTest extends PostgresTestContainerSetup {
         Driver driver = DriverTestEntities.getDriverForIT();
         driverRepository.save(driver);
 
-        mockMvc.perform(put(DRIVER_BASE_URL + "/busy/{id}", driver.getId()))
+        DriverChangeStatusRequest request = DriverTestEntities.getDriverChangeStatusRequest(driver.getId());
+        String jsonRequest = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put(DRIVER_BASE_URL + "/busy").with(SecurityMockMvcRequestPostProcessors.jwt()
+                                .authorities(new SimpleGrantedAuthority("ROLE_admin")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
                 .andExpect(status().isOk());
 
         Driver updatedDriver = driverRepository.findById(driver.getId()).orElseThrow();

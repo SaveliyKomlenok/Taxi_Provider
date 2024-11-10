@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.service;
 
+import com.software.modsen.driverservice.dto.request.CarChangeStatusRequest;
 import com.software.modsen.driverservice.entity.Car;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface CarService {
 
     Car update(Car car);
 
-    Car changeRestrictionsStatus(Long id);
+    Car changeRestrictionsStatus(CarChangeStatusRequest request);
 }

@@ -1,5 +1,6 @@
 package com.software.modsen.rideservice.service.impl;
 
+import com.software.modsen.rideservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.rideservice.dto.request.RatingPassengerRequest;
 import com.software.modsen.rideservice.dto.request.RideCancelRequest;
 import com.software.modsen.rideservice.dto.request.RideFinishRequest;
@@ -7,7 +8,14 @@ import com.software.modsen.rideservice.dto.request.RideStatusChangeRequest;
 import com.software.modsen.rideservice.dto.response.DriverResponse;
 import com.software.modsen.rideservice.entity.Ride;
 import com.software.modsen.rideservice.enumiration.Status;
-import com.software.modsen.rideservice.exception.*;
+import com.software.modsen.rideservice.exception.DriverBusyException;
+import com.software.modsen.rideservice.exception.DriverRestrictedException;
+import com.software.modsen.rideservice.exception.PassengerRestrictedException;
+import com.software.modsen.rideservice.exception.RideAcceptException;
+import com.software.modsen.rideservice.exception.RideCancelException;
+import com.software.modsen.rideservice.exception.RideChangeStatusException;
+import com.software.modsen.rideservice.exception.RideFinishException;
+import com.software.modsen.rideservice.exception.RideNotExistsException;
 import com.software.modsen.rideservice.repository.RideRepository;
 import com.software.modsen.rideservice.service.DriverService;
 import com.software.modsen.rideservice.service.PassengerService;
@@ -62,8 +70,9 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Ride create(Ride ride) {
-        checkPassengerRestrict(ride.getPassengerId());
+    public Ride create(Long passengerId, Ride ride) {
+        checkPassengerRestrict(passengerId);
+        ride.setPassengerId(passengerId);
         ride.setStatus(Status.CREATED);
         ride.setStartDateTime(LocalDateTime.now());
         ride.setPrice(BigDecimal.valueOf(Math.random() * 10).setScale(2, RoundingMode.DOWN));
@@ -77,17 +86,20 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Ride accept(RideStatusChangeRequest request) {
-        checkDriverBusyAndRestricted(request.getDriverId());
+    public Ride accept(Long driverId, RideStatusChangeRequest request) {
+        checkDriverBusyAndRestricted(driverId);
         Ride ride = rideRepository.findRideByIdAndStatusEquals(
                         request.getRideId(),
                         Status.CREATED)
                 .orElseThrow(() -> new RideAcceptException(String.format(RIDE_NOT_ACCEPTED, request.getRideId())));
 
-        ride.setDriverId(request.getDriverId());
+        ride.setDriverId(driverId);
         ride.setStatus(Status.ACCEPTED);
 
-        driverService.changeBusyStatus(request.getDriverId());
+        driverService.changeBusyStatus(DriverChangeStatusRequest.builder()
+                .id(driverId)
+                .status(true)
+                .build());
         return rideRepository.save(ride);
     }
 
@@ -102,51 +114,57 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Ride finish(RideFinishRequest request) {
+    public Ride finish(Long driverId, RideFinishRequest request) {
         Ride ride = rideRepository.findRideByIdAndDriverIdAndStatusEquals(
                         request.getRideId(),
-                        request.getDriverId(),
+                        driverId,
                         Status.ON_WAY_TO_DESTINATION)
                 .orElseThrow(() -> new RideFinishException(String.format(RIDE_NOT_FINISHED, request.getRideId())));
 
         ride.setStatus(Status.FINISHED);
         ride.setEndDateTime(LocalDateTime.now());
 
-        driverService.changeBusyStatus(request.getDriverId());
-        requestRateByDriver(request, ride);
+        driverService.changeBusyStatus(DriverChangeStatusRequest.builder()
+                .id(driverId)
+                .status(false)
+                .build());
+        requestRatedPassenger(driverId, request, ride);
         return rideRepository.save(ride);
     }
 
-    private void requestRateByDriver(RideFinishRequest request, Ride ride) {
-        ratingService.rateByDriver(RatingPassengerRequest.builder()
-                        .rideId(ride.getId())
-                        .driverId(ride.getDriverId())
-                        .passengerId(ride.getPassengerId())
-                        .passengerRating(request.getPassengerRating())
+    private void requestRatedPassenger(Long driverId, RideFinishRequest request, Ride ride) {
+        ratingService.ratedPassenger(RatingPassengerRequest.builder()
+                .rideId(ride.getId())
+                .driverId(driverId)
+                .passengerId(ride.getPassengerId())
+                .passengerRating(request.getPassengerRating())
                 .build());
     }
 
     @Override
-    public Ride cancel(RideCancelRequest request) {
+    public Ride cancel(Long passengerId, RideCancelRequest request) {
         Ride ride = rideRepository.findRideByIdAndPassengerIdAndStatusEqualsOrStatusEquals(
                         request.getRideId(),
-                        request.getPassengerId(),
+                        passengerId,
                         Status.CREATED,
                         Status.ACCEPTED)
                 .orElseThrow(() -> new RideCancelException(String.format(RIDE_NOT_CANCELED, request.getRideId())));
 
         if (ride.getStatus().equals(Status.ACCEPTED)) {
-            driverService.changeBusyStatus(ride.getDriverId());
+            driverService.changeBusyStatus(DriverChangeStatusRequest.builder()
+                    .id(ride.getDriverId())
+                    .status(false)
+                    .build());
         }
         ride.setStatus(Status.CANCELED);
         return rideRepository.save(ride);
     }
 
     @Override
-    public Ride changeStatus(RideStatusChangeRequest request) {
+    public Ride changeStatus(Long driverId, RideStatusChangeRequest request) {
         Ride ride = rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(
                         request.getRideId(),
-                        request.getDriverId(),
+                        driverId,
                         Status.ACCEPTED,
                         Status.ON_WAY_FOR_PASSENGER)
                 .orElseThrow(() -> new RideChangeStatusException(String.format(RIDE_STATUS_NOT_CHANGED, request.getRideId())));

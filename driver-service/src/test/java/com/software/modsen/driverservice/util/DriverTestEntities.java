@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.util;
 
+import com.software.modsen.driverservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.driverservice.dto.request.DriverCreateRequest;
 import com.software.modsen.driverservice.dto.request.DriverUpdateRequest;
 import com.software.modsen.driverservice.entity.Car;
@@ -68,6 +69,13 @@ public class DriverTestEntities {
                 .build();
     }
 
+    public DriverChangeStatusRequest getDriverChangeStatusRequest(Long id) {
+        return DriverChangeStatusRequest.builder()
+                .id(id)
+                .status(true)
+                .build();
+    }
+
     public Driver getDriverForIT() {
         return Driver.builder()
                 .email(DRIVER_EMAIL)
@@ -95,7 +103,6 @@ public class DriverTestEntities {
 
     public DriverUpdateRequest getDriverUpdateRequestForIT() {
         return DriverUpdateRequest.builder()
-                .email(SECOND_DRIVER_EMAIL)
                 .phoneNumber(SECOND_DRIVER_PHONE_NUMBER)
                 .build();
     }

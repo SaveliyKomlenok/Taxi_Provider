@@ -12,7 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class RideFinishRequest {
-    private Long driverId;
     private Long rideId;
     private Integer passengerRating;
 }

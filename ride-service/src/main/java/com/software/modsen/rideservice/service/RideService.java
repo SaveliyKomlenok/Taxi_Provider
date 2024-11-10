@@ -12,9 +12,9 @@ public interface RideService {
     List<Ride> getAll(Integer pageNumber, Integer pageSize, String sortBy);
     List<Ride> getAllByPassengerId(Long passengerId);
     List<Ride> getAllByDriverId(Long driverId);
-    Ride create(Ride ride);
-    Ride accept(RideStatusChangeRequest request);
-    Ride finish(RideFinishRequest request);
-    Ride cancel(RideCancelRequest request);
-    Ride changeStatus(RideStatusChangeRequest request);
+    Ride create(Long passengerId, Ride ride);
+    Ride accept(Long driverId, RideStatusChangeRequest request);
+    Ride finish(Long driverId, RideFinishRequest request);
+    Ride cancel(Long passengerId, RideCancelRequest request);
+    Ride changeStatus(Long driverId, RideStatusChangeRequest request);
 }

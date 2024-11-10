@@ -34,8 +34,8 @@ class PassengerServiceImpl(private val passengerRepository: PassengerRepository)
         return passengerRepository.save(passenger)
     }
 
-    override fun update(passenger: Passenger): Passenger {
-        getOrThrow(passenger.id!!)
+    override fun update(id: Long, passenger: Passenger): Passenger {
+        getOrThrow(id)
         val existingPassenger = passengerRepository
             .findPassengerByEmailAndPhoneNumber(passenger.email, passenger.phoneNumber)
         if (existingPassenger != null && existingPassenger.id != passenger.id) {

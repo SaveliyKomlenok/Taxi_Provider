@@ -23,8 +23,8 @@ public class RatingServiceImpl implements RatingService {
     @Override
     @Retry(name = RATE_BY_DRIVER)
     @CircuitBreaker(name = RATE_BY_DRIVER, fallbackMethod = "fallBackRateByDriver")
-    public RatingResponse rateByDriver(RatingPassengerRequest request) {
-        return ratingClient.rateByDriver(request);
+    public RatingResponse ratedPassenger(RatingPassengerRequest request) {
+        return ratingClient.ratedPassenger(request);
     }
 
     private RatingResponse fallBackRateByDriver(Throwable throwable) {

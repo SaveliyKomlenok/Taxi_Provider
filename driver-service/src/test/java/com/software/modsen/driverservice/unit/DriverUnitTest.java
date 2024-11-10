@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.unit;
 
+import com.software.modsen.driverservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.driverservice.entity.Driver;
 import com.software.modsen.driverservice.exception.DriverAlreadyExistsException;
 import com.software.modsen.driverservice.exception.DriverNotExistsException;
@@ -118,7 +119,7 @@ public class DriverUnitTest {
         when(carService.getById(driver.getCar().getId())).thenReturn(driver.getCar());
         when(driverRepository.save(driver)).thenReturn(driver);
 
-        Driver result = driverService.update(driver);
+        Driver result = driverService.update(DRIVER_ID, driver);
 
         assertEquals(driver, result);
         verify(driverRepository).save(driver);
@@ -131,16 +132,17 @@ public class DriverUnitTest {
         when(driverRepository.findDriverByEmailAndPhoneNumber(DRIVER_EMAIL, DRIVER_PHONE_NUMBER))
                 .thenReturn(Optional.of(secondDriver));
 
-        assertThrows(DriverAlreadyExistsException.class, () -> driverService.update(driver));
+        assertThrows(DriverAlreadyExistsException.class, () -> driverService.update(DRIVER_ID, driver));
         verify(driverRepository, never()).save(any());
     }
 
     @Test
     void changeRestrictionsStatus_ShouldChangeStatus_WhenDriverExists() {
+        DriverChangeStatusRequest request = DriverTestEntities.getDriverChangeStatusRequest(DRIVER_ID);
         when(driverRepository.findById(DRIVER_ID)).thenReturn(Optional.of(driver));
         when(driverRepository.save(driver)).thenReturn(driver);
 
-        Driver updatedDriver = driverService.changeRestrictionsStatus(DRIVER_ID);
+        Driver updatedDriver = driverService.changeRestrictionsStatus(request);
 
         assertTrue(updatedDriver.isRestricted());
         verify(driverRepository, times(WANTED_NUMBER_OF_INVOCATIONS)).save(driver);
@@ -148,18 +150,20 @@ public class DriverUnitTest {
 
     @Test
     void changeRestrictionsStatus_ShouldThrowException_WhenDriverDoesNotExist() {
+        DriverChangeStatusRequest request = DriverTestEntities.getDriverChangeStatusRequest(DRIVER_ID);
         when(driverRepository.findById(DRIVER_ID)).thenReturn(Optional.empty());
 
-        assertThrows(DriverNotExistsException.class, () -> driverService.changeRestrictionsStatus(DRIVER_ID));
+        assertThrows(DriverNotExistsException.class, () -> driverService.changeRestrictionsStatus(request));
         verify(driverRepository, never()).save(any());
     }
 
     @Test
     void changeBusyStatus_ShouldChangeBusyStatus_WhenDriverExists() {
+        DriverChangeStatusRequest request = DriverTestEntities.getDriverChangeStatusRequest(DRIVER_ID);
         when(driverRepository.findById(DRIVER_ID)).thenReturn(Optional.of(driver));
         when(driverRepository.save(driver)).thenReturn(driver);
 
-        Driver updatedDriver = driverService.changeBusyStatus(DRIVER_ID);
+        Driver updatedDriver = driverService.changeBusyStatus(request);
 
         assertTrue(updatedDriver.isBusy());
         verify(driverRepository, times(WANTED_NUMBER_OF_INVOCATIONS)).save(driver);
@@ -167,9 +171,10 @@ public class DriverUnitTest {
 
     @Test
     void changeBusyStatus_ShouldThrowException_WhenDriverDoesNotExist() {
+        DriverChangeStatusRequest request = DriverTestEntities.getDriverChangeStatusRequest(DRIVER_ID);
         when(driverRepository.findById(DRIVER_ID)).thenReturn(Optional.empty());
 
-        assertThrows(DriverNotExistsException.class, () -> driverService.changeBusyStatus(DRIVER_ID));
+        assertThrows(DriverNotExistsException.class, () -> driverService.changeBusyStatus(request));
         verify(driverRepository, never()).save(any());
     }
 }

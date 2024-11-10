@@ -12,6 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class RideCancelRequest {
-    private Long passengerId;
     private Long rideId;
 }

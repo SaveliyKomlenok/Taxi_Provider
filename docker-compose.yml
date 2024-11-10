@@ -119,6 +119,20 @@ services:
     networks:
       - taxi_provider
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command:
+      - start-dev
+      - --import-realm
+    ports:
+      - "8180:8080"
+    volumes:
+      - /opt/keycloak/data/import/:/opt/keycloak/data/import/
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
 volumes:
   postgres:
     driver: local

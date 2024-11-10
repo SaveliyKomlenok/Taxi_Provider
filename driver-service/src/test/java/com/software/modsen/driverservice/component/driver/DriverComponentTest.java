@@ -121,10 +121,10 @@ public class DriverComponentTest {
         when(driverRepository.save(driver)).thenReturn(driver);
     }
 
-    @When("I update the driver")
-    public void iUpdateTheDriver() {
+    @When("I update the driver with id {long}")
+    public void iUpdateTheDriver(Long id) {
         try {
-            driver = driverService.update(driver);
+            driver = driverService.update(id, driver);
         } catch (DriverAlreadyExistsException e) {
             exception = e;
         }
@@ -148,7 +148,7 @@ public class DriverComponentTest {
     @When("I change the restrictions status of the driver with id {long}")
     public void iChangeTheRestrictionsStatusOfTheDriver(Long id) {
         try {
-            driver = driverService.changeRestrictionsStatus(id);
+            driver = driverService.changeRestrictionsStatus(DriverTestEntities.getDriverChangeStatusRequest(id));
         } catch (DriverNotExistsException e) {
             exception = e;
         }
@@ -164,7 +164,7 @@ public class DriverComponentTest {
     @When("I change the busy status of the driver with id {long}")
     public void iChangeTheBusyStatusOfTheDriverWithId(Long id) {
         try {
-            driver = driverService.changeBusyStatus(id);
+            driver = driverService.changeBusyStatus(DriverTestEntities.getDriverChangeStatusRequest(id));
         } catch (DriverNotExistsException e) {
             exception = e;
         }
