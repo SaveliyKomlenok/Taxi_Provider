@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import jakarta.persistence.Version
 
 @Entity
 @Table(name = "passenger_ratings")
@@ -25,10 +26,15 @@ class PassengerRating {
     @field:JoinColumn(name = "passenger_id")
     var passenger: Passenger?
 
+    @field:Column(name = "version")
+    @field:Version
+    private val version: Long?
+
     constructor() {
         id = null
         rating = 0.0
         passenger = null
+        version = null
     }
 
     constructor(rating: Double, passenger: Passenger?) : this() {

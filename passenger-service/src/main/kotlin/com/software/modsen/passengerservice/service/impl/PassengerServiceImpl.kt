@@ -10,9 +10,10 @@ import com.software.modsen.passengerservice.util.ExceptionMessages
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-class PassengerServiceImpl(private val passengerRepository: PassengerRepository) : PassengerService {
+open class PassengerServiceImpl(private val passengerRepository: PassengerRepository) : PassengerService {
     override fun getById(id: Long): Passenger {
         return getOrThrow(id)
     }
@@ -25,6 +26,7 @@ class PassengerServiceImpl(private val passengerRepository: PassengerRepository)
         }
     }
 
+    @Transactional
     override fun save(passenger: Passenger): Passenger {
         if (passengerRepository.findPassengerByEmailAndPhoneNumber(
                 passenger.email,
@@ -34,6 +36,7 @@ class PassengerServiceImpl(private val passengerRepository: PassengerRepository)
         return passengerRepository.save(passenger)
     }
 
+    @Transactional
     override fun update(id: Long, passenger: Passenger): Passenger {
         getOrThrow(id)
         val existingPassenger = passengerRepository

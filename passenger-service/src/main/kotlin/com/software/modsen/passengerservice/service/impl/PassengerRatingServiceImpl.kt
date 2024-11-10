@@ -7,17 +7,20 @@ import com.software.modsen.passengerservice.service.PassengerRatingService
 import com.software.modsen.passengerservice.service.PassengerService
 import com.software.modsen.passengerservice.util.ExceptionMessages
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-class PassengerRatingServiceImpl(
+open class PassengerRatingServiceImpl(
     private val passengerRatingRepository: PassengerRatingRepository,
     private val passengerService: PassengerService
 ) : PassengerRatingService {
 
+    @Transactional
     override fun getByPassengerId(passengerId: Long): PassengerRating {
         return getOrThrow(passengerId)
     }
 
+    @Transactional
     override fun save(passengerRating: PassengerRating): PassengerRating {
         val tempPassengerRating =
             passengerRatingRepository.findPassengerRatingByPassengerId(passengerRating.passenger?.id!!)

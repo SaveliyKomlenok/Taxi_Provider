@@ -8,6 +8,7 @@ import com.software.modsen.driverservice.service.DriverRatingService;
 import com.software.modsen.driverservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.software.modsen.driverservice.util.ExceptionMessages.RATING_NOT_EXISTS;
 
@@ -17,11 +18,13 @@ public class DriverRatingServiceImpl implements DriverRatingService {
     private final DriverRatingRepository driverRatingRepository;
     private final DriverService driverService;
 
+    @Transactional
     @Override
     public DriverRating getByDriverId(Long driverId) {
         return getOrThrow(driverId);
     }
 
+    @Transactional
     @Override
     public DriverRating save(DriverRating driverRating) {
         DriverRating newPassengerRating =
