@@ -21,6 +21,7 @@
                              referencedColumnNames="driver_id"/>
             </column>
             <column name="rating" type="float"/>
+            <column name="version" type="bigint"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>
