@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    @Transactional
     @Override
     public Driver save(Driver driver) {
         if(driverRepository.findDriverByEmailAndPhoneNumber(
@@ -48,6 +50,7 @@ public class DriverServiceImpl implements DriverService {
         return driverRepository.save(driver);
     }
 
+    @Transactional
     @Override
     public Driver update(Long id, Driver driver) {
         driver.setId(id);

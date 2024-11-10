@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -59,11 +60,13 @@ public class RideServiceImpl implements RideService {
         return rideRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))).getContent();
     }
 
+    @Transactional
     @Override
     public List<Ride> getAllByPassengerId(Long passengerId) {
         return rideRepository.findRidesByPassengerIdAndStatusEquals(passengerId, Status.FINISHED);
     }
 
+    @Transactional
     @Override
     public List<Ride> getAllByDriverId(Long driverId) {
         return rideRepository.findRidesByDriverIdAndStatusEquals(driverId, Status.FINISHED);
@@ -85,6 +88,7 @@ public class RideServiceImpl implements RideService {
         }
     }
 
+    @Transactional
     @Override
     public Ride accept(Long driverId, RideStatusChangeRequest request) {
         checkDriverBusyAndRestricted(driverId);
@@ -113,6 +117,7 @@ public class RideServiceImpl implements RideService {
         }
     }
 
+    @Transactional
     @Override
     public Ride finish(Long driverId, RideFinishRequest request) {
         Ride ride = rideRepository.findRideByIdAndDriverIdAndStatusEquals(
@@ -141,6 +146,7 @@ public class RideServiceImpl implements RideService {
                 .build());
     }
 
+    @Transactional
     @Override
     public Ride cancel(Long passengerId, RideCancelRequest request) {
         Ride ride = rideRepository.findRideByIdAndPassengerIdAndStatusEqualsOrStatusEquals(
@@ -160,6 +166,7 @@ public class RideServiceImpl implements RideService {
         return rideRepository.save(ride);
     }
 
+    @Transactional
     @Override
     public Ride changeStatus(Long driverId, RideStatusChangeRequest request) {
         Ride ride = rideRepository.findRideByIdAndDriverIdAndStatusEqualsOrStatusEquals(
