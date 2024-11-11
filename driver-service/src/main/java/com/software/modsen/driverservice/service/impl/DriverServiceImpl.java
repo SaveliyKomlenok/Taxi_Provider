@@ -10,6 +10,7 @@ import com.software.modsen.driverservice.repository.DriverRepository;
 import com.software.modsen.driverservice.service.CarService;
 import com.software.modsen.driverservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,14 @@ import static com.software.modsen.driverservice.util.ExceptionMessages.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DriverServiceImpl implements DriverService {
     private final CarService carService;
     private final DriverRepository driverRepository;
 
     @Override
     public Driver getById(Long id) {
+        log.info("Driver with id" + id);
         return getOrThrow(id);
     }
 

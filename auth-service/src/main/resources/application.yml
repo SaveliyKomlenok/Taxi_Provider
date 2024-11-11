@@ -39,8 +39,8 @@ jwt:
     grant-type: password
     client-grant-type: client_credentials
     client-id: taxi_provider_auth
-    client-secret: wA4aMhSOsstBhNZ2oPCgv62ChxtYvohf
-    client-url-id: 047d34a2-f222-4e8b-9891-b35ee3a4b171
+    client-secret: rVUPwbS37NnGQ0cZsyOAGM3HdayOj6im
+    client-url-id: 7d7f6564-7aa3-439f-bfd6-197f1bcd97b8
     token: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/token
     register-url: http://localhost:8180/admin/realms/taxi_provider_realm/users
     get-driver-role-url: http://localhost:8180/admin/realms/taxi_provider_realm/clients/${jwt.auth.client-url-id}/roles/driver
