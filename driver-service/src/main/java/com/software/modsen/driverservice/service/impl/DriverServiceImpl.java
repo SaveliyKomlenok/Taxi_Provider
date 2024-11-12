@@ -29,15 +29,16 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public Driver getById(Long id) {
-        log.info("Driver with id" + id);
         return getOrThrow(id);
     }
 
     @Override
     public List<Driver> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted) {
         if (includeRestricted != null && includeRestricted) {
+            log.info("All restricted drivers");
             return driverRepository.findAllByRestrictedIsTrue(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy)));
         } else {
+            log.info("All drivers");
             return driverRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))).getContent();
         }
     }
@@ -50,6 +51,7 @@ public class DriverServiceImpl implements DriverService {
                 driver.getPhoneNumber()).isPresent()){
             throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
         }
+        log.info("Saving driver");
         return driverRepository.save(driver);
     }
 
@@ -66,6 +68,7 @@ public class DriverServiceImpl implements DriverService {
             throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
         }
         driver.setCar(checkCarOccupancyForUpdateDriver(driver.getCar().getId(), driver.getId()));
+        log.info("Updating driver");
         return driverRepository.save(driver);
     }
 
@@ -76,6 +79,7 @@ public class DriverServiceImpl implements DriverService {
         if (existingDriver != null && !existingDriver.getId().equals(driverId)) {
             throw new CarOccupiedException(String.format(CAR_OCCUPIED, id));
         }
+        log.info("Check car occupancy");
         return car;
     }
 
@@ -83,6 +87,7 @@ public class DriverServiceImpl implements DriverService {
     public Driver changeRestrictionsStatus(DriverChangeStatusRequest request) {
         Driver driver = getOrThrow(request.getId());
         driver.setRestricted(request.isStatus());
+        log.info("Change driver restrict status");
         return driverRepository.save(driver);
     }
 
@@ -90,10 +95,12 @@ public class DriverServiceImpl implements DriverService {
     public Driver changeBusyStatus(DriverChangeStatusRequest request) {
         Driver driver = getOrThrow(request.getId());
         driver.setBusy(request.isStatus());
+        log.info("Change driver busy status");
         return driverRepository.save(driver);
     }
 
     private Driver getOrThrow(Long id) {
+        log.info("Driver with id " + id);
         return driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotExistsException(String.format(DRIVER_NOT_EXISTS, id)));
     }
