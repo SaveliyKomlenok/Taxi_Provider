@@ -37,6 +37,9 @@
         <liquibase-core.version>4.29.2</liquibase-core.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
         <modelmapper.version>3.2.1</modelmapper.version>
+        <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
+        <zipkin-server.version>2.12.9</zipkin-server.version>
+        <zipkin-autoconfigure-ui.version>2.12.9</zipkin-autoconfigure-ui.version>
     </properties>
     <dependencies>
         <dependency>
@@ -135,7 +138,32 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.java</groupId>
+            <artifactId>zipkin-server</artifactId>
+            <version>${zipkin-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.java</groupId>
+            <artifactId>zipkin-autoconfigure-ui</artifactId>
+            <version>${zipkin-autoconfigure-ui.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
