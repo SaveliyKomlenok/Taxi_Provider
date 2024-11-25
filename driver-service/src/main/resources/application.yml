@@ -1,9 +1,13 @@
 spring:
   application:
     name: driver-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/taxi_provider_db
-    driver-class-name: org.postgresql.Driver
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/taxi_provider_db
+#    driver-class-name: org.postgresql.Driver
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/taxi_provider_db
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:

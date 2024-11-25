@@ -1,8 +1,9 @@
 package com.software.modsen.driverservice.service;
 
 import com.software.modsen.driverservice.entity.DriverRating;
+import reactor.core.publisher.Mono;
 
 public interface DriverRatingService {
-    DriverRating getByDriverId(Long driverId);
-    DriverRating save(DriverRating driverRating);
+    Mono<DriverRating> getByDriverId(Long driverId);
+    Mono<DriverRating> save(DriverRating driverRating);
 }

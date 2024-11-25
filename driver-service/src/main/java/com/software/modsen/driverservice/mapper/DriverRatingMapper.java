@@ -6,13 +6,12 @@ import com.software.modsen.driverservice.dto.response.DriverResponse;
 import com.software.modsen.driverservice.entity.Driver;
 import com.software.modsen.driverservice.entity.DriverRating;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class DriverRatingMapper {
-    private final ModelMapper mapper;
+    private final DriverMapper driverMapper;
 
     public DriverRating toEntity(DriverRatingRequest request){
         Driver driver = Driver.builder()
@@ -25,7 +24,7 @@ public class DriverRatingMapper {
     }
 
     public DriverRatingResponse toResponse(DriverRating driverRating) {
-        DriverResponse driverResponse = mapper.map(driverRating.getDriver(), DriverResponse.class);
+        DriverResponse driverResponse = driverMapper.toResponse(driverRating.getDriver());
         return DriverRatingResponse.builder()
                 .id(driverRating.getId())
                 .driver(driverResponse)

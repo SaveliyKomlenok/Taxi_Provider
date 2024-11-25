@@ -35,7 +35,7 @@
         <cucumber-java.version>7.20.0</cucumber-java.version>
         <cucumber-junit.version>7.20.0</cucumber-junit.version>
         <liquibase-core.version>4.29.2</liquibase-core.version>
-        <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
+        <springdoc-openapi-starter-webflux-ui.version>2.7.0</springdoc-openapi-starter-webflux-ui.version>
         <modelmapper.version>3.2.1</modelmapper.version>
         <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
         <zipkin-server.version>2.12.9</zipkin-server.version>
@@ -51,6 +51,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,6 +85,11 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -124,8 +137,8 @@
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>${springdoc-openapi-starter-webflux-ui.version}</version>
         </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>

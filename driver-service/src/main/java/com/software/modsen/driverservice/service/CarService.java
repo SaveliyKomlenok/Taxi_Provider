@@ -2,17 +2,17 @@ package com.software.modsen.driverservice.service;
 
 import com.software.modsen.driverservice.dto.request.CarChangeStatusRequest;
 import com.software.modsen.driverservice.entity.Car;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface CarService {
-    Car getById(Long id);
+    Mono<Car> getById(Long id);
 
-    List<Car> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted);
+    Flux<Car> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted);
 
-    Car save(Car car);
+    Mono<Car> save(Car car);
 
-    Car update(Car car);
+    Mono<Car> update(Car car);
 
-    Car changeRestrictionsStatus(CarChangeStatusRequest request);
+    Mono<Car> changeRestrictionsStatus(CarChangeStatusRequest request);
 }
