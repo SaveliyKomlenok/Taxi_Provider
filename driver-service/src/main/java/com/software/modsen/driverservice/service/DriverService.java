@@ -2,19 +2,19 @@ package com.software.modsen.driverservice.service;
 
 import com.software.modsen.driverservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.driverservice.entity.Driver;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface DriverService {
-    Driver getById(Long id);
+    Mono<Driver> getById(Long id);
 
-    List<Driver> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted);
+    Flux<Driver> getAll(Integer pageNumber, Integer pageSize, String sortBy, Boolean includeRestricted);
 
-    Driver save(Driver driver);
+    Mono<Driver> save(Driver driver);
 
-    Driver update(Long id, Driver driver);
+    Mono<Driver> update(Long id, Driver driver);
 
-    Driver changeRestrictionsStatus(DriverChangeStatusRequest request);
+    Mono<Driver> changeRestrictionsStatus(DriverChangeStatusRequest request);
 
-    Driver changeBusyStatus(DriverChangeStatusRequest request);
+    Mono<Driver> changeBusyStatus(DriverChangeStatusRequest request);
 }

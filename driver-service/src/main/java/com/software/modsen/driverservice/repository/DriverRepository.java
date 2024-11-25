@@ -3,17 +3,18 @@ package com.software.modsen.driverservice.repository;
 import com.software.modsen.driverservice.entity.Driver;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface DriverRepository extends JpaRepository<Driver, Long> {
-    List<Driver> findAllByRestrictedIsTrue(PageRequest pageRequest);
+@Repository
+public interface DriverRepository extends R2dbcRepository<Driver, Long> {
+    Flux<Driver> findAllByRestrictedIsTrue(PageRequest pageRequest);
 
     @Lock(value = LockModeType.PESSIMISTIC_READ)
-    Optional<Driver> findDriverByEmailAndPhoneNumber(String email, String phoneNumber);
+    Mono<Driver> findDriverByEmailAndPhoneNumber(String email, String phoneNumber);
 
-    Optional<Driver> findDriverByCarId(Long id);
+    Mono<Driver> findDriverByCarId(Long id);
 }

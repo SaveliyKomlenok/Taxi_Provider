@@ -1,70 +1,52 @@
 package com.software.modsen.driverservice.entity;
 
 import com.software.modsen.driverservice.enumeration.Gender;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.relational.core.mapping.Column;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "drivers")
+@Table("drivers")
 @Builder
 @EqualsAndHashCode
 @ToString
 public class Driver {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "driver_id")
+    @Column("driver_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "car_id")
-    private Car car;
+    @Column("car_id")
+    private Long carId;
 
-    @Column(name = "firstname")
+    @Column("firstname")
     private String firstname;
 
-    @Column(name = "surname")
+    @Column("surname")
     private String surname;
 
-    @Column(name = "patronymic")
+    @Column("patronymic")
     private String patronymic;
 
-    @Column(name = "email")
+    @Column("email")
     private String email;
 
-    @Column(name = "phone_number")
+    @Column("phone_number")
     private String phoneNumber;
 
-    @Column(name = "gender")
-    @Enumerated(EnumType.STRING)
+    @Column("gender")
     private Gender gender;
 
-    @Column(name = "is_restricted")
+    @Column("is_restricted")
     private boolean restricted;
 
-    @Column(name = "is_busy")
+    @Column("is_busy")
     private boolean busy;
 
-    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DriverRating driverRating;
+    @Transient
+    private Car car;
 }
