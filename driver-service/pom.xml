@@ -40,6 +40,8 @@
         <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
         <zipkin-server.version>2.12.9</zipkin-server.version>
         <zipkin-autoconfigure-ui.version>2.12.9</zipkin-autoconfigure-ui.version>
+        <spring-cloud-starter-zipkin.version>2.2.8.RELEASE</spring-cloud-starter-zipkin.version>
+        <spring-cloud-starter-sleuth.version>3.1.11</spring-cloud-starter-sleuth.version>
     </properties>
     <dependencies>
         <dependency>
@@ -142,6 +144,16 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+            <version>${spring-cloud-starter-zipkin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <version>${spring-cloud-starter-sleuth.version}</version>
         </dependency>
         <dependency>
             <groupId>io.zipkin.java</groupId>

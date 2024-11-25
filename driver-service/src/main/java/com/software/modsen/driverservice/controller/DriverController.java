@@ -51,7 +51,7 @@ public class DriverController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasRole('realm-admin')")
+    @PreAuthorize("hasRole('realm-admin')")
     public ResponseEntity<DriverResponse> save(@RequestBody @Valid DriverCreateRequest request) {
         Driver driver = driverService.save(driverMapper.toEntity(request));
         return new ResponseEntity<>(driverMapper.toResponse(driver), HttpStatus.CREATED);

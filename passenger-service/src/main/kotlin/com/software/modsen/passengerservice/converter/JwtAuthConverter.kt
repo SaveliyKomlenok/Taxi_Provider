@@ -38,22 +38,15 @@ class JwtAuthConverter : Converter<Jwt, AbstractAuthenticationToken> {
     }
 
     private fun extractResourceRoles(jwt: Jwt): Collection<GrantedAuthority> {
-        val resourceAccess: Map<String, Any> = jwt.getClaim("resource_access") ?: return emptySet()
+        val resourceAccess: Map<String, Any> = jwt.getClaim<Map<String, Any>>("resource_access") ?: return emptySet()
 
-        val resource: Map<String, Any>? = resourceAccess[resourceId] as? Map<String, Any>
-        val resourceRoles: List<String>? = resource?.get("roles") as? List<String>
-
-        if (resourceRoles.isNullOrEmpty()) {
-            return emptySet()
+        val resource = when {
+            resourceAccess[resourceId] != null -> resourceAccess[resourceId] as Map<String, Any>
+            resourceAccess[clientResourceId] != null -> resourceAccess[clientResourceId] as Map<String, Any>
+            else -> return emptySet()
         }
 
-        if (resourceRoles[0] != "admin" && resourceRoles[0] != "driver" && resourceRoles[0] != "passenger") {
-            val clientResource = resourceAccess[clientResourceId] as? Map<String, Any>
-            val clientResourceRoles = clientResource?.get("roles") as? List<String>
-            if (!clientResourceRoles.isNullOrEmpty()) {
-                return clientResourceRoles.map { role -> SimpleGrantedAuthority("ROLE_$role") }.toSet()
-            }
-        }
+        val resourceRoles = resource["roles"] as List<String>
 
         return resourceRoles.map { role -> SimpleGrantedAuthority("ROLE_$role") }.toSet()
     }

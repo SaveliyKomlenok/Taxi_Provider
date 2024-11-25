@@ -41,6 +41,8 @@
         <spring-cloud-contract.version>2.1.1.RELEASE</spring-cloud-contract.version>
         <kotlin.version>1.8.0</kotlin.version>
         <mapstruct.version>1.6.2</mapstruct.version>
+        <logstash-logback-encoder.version>7.2</logstash-logback-encoder.version>
+        <kotlinx-coroutines.version>1.9.0</kotlinx-coroutines.version>
     </properties>
     <dependencies>
         <dependency>
@@ -174,7 +176,22 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.2</version>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core</artifactId>
+            <version>${kotlinx-coroutines.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-reactive</artifactId>
+            <version>${kotlinx-coroutines.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-reactor</artifactId>
+            <version>${kotlinx-coroutines.version}</version>
         </dependency>
     </dependencies>
 
