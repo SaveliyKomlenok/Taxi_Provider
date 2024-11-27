@@ -4,16 +4,6 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/ratings
-  #  datasource:
-#    url: jdbc:postgresql://localhost:5432/taxi_provider_db
-#    driver-class-name: org.postgresql.Driver
-#    username: ${DB_USERNAME}
-#    password: ${DB_PASSWORD}
-#  jpa:
-#    database-platform: org.hibernate.dialect.PostgreSQLDialect
-#    generate-ddl: false
-#    hibernate:
-#      ddl-auto: validate
   liquibase:
     change-log: classpath:db/changelog/main-changelog.xml
     enabled: true
