@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class RatingResponse {
-    private Long id;
+    private String id;
     private Long rideId;
     private Long driverId;
     private Long passengerId;
