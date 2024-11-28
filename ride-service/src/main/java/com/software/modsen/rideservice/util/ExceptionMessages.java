@@ -16,4 +16,6 @@ public class ExceptionMessages {
     public static final String PASSENGER_SERVICE_NOT_AVAILABLE = "Passenger service is not available";
     public static final String DRIVER_SERVICE_NOT_AVAILABLE = "Driver service is not available";
     public static final String RATING_SERVICE_NOT_AVAILABLE = "Rating service is not available";
+    public static final String GENERATING_EXCEL_FILE_ERROR = "Error generating Excel file";
+    public static final String SENDING_EMAIL_ERROR = "Error sending email";
 }
