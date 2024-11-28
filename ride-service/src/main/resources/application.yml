@@ -20,6 +20,14 @@ spring:
         jwt:
           issuer-uri: http://localhost:8180/realms/taxi_provider_realm
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: skomlenok363@gmail.com
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 server:
   port: 8083

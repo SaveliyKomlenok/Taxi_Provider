@@ -2,6 +2,7 @@ package com.software.modsen.rideservice.service.impl;
 
 import com.software.modsen.rideservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.rideservice.dto.request.RatingPassengerRequest;
+import com.software.modsen.rideservice.dto.request.ReportRidesRequest;
 import com.software.modsen.rideservice.dto.request.RideCancelRequest;
 import com.software.modsen.rideservice.dto.request.RideFinishRequest;
 import com.software.modsen.rideservice.dto.request.RideStatusChangeRequest;
@@ -21,12 +22,23 @@ import com.software.modsen.rideservice.service.DriverService;
 import com.software.modsen.rideservice.service.PassengerService;
 import com.software.modsen.rideservice.service.RatingService;
 import com.software.modsen.rideservice.service.RideService;
+import com.software.modsen.rideservice.specification.RideSpecification;
+import jakarta.activation.DataSource;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.util.ByteArrayDataSource;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -34,6 +46,7 @@ import java.util.List;
 
 import static com.software.modsen.rideservice.util.ExceptionMessages.DRIVER_BUSY;
 import static com.software.modsen.rideservice.util.ExceptionMessages.DRIVER_RESTRICTED;
+import static com.software.modsen.rideservice.util.ExceptionMessages.GENERATING_EXCEL_FILE_ERROR;
 import static com.software.modsen.rideservice.util.ExceptionMessages.INVALID_RIDE_STATUS;
 import static com.software.modsen.rideservice.util.ExceptionMessages.PASSENGER_RESTRICTED;
 import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_ACCEPTED;
@@ -41,6 +54,19 @@ import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_CA
 import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_EXISTS;
 import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_NOT_FINISHED;
 import static com.software.modsen.rideservice.util.ExceptionMessages.RIDE_STATUS_NOT_CHANGED;
+import static com.software.modsen.rideservice.util.ExceptionMessages.SENDING_EMAIL_ERROR;
+import static com.software.modsen.rideservice.util.ReportConstants.ATTACHMENT_FILENAME;
+import static com.software.modsen.rideservice.util.ReportConstants.EMAIL_DATA_SOURCE;
+import static com.software.modsen.rideservice.util.ReportConstants.EMAIL_FROM;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_DRIVER_ID;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_END_DATE;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_FROM;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_NAME;
+import static com.software.modsen.rideservice.util.ReportConstants.EMAIL_TEXT;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_PASSENGER_ID;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_START_DATE;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_STATUS;
+import static com.software.modsen.rideservice.util.ReportConstants.REPORT_TO;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +75,7 @@ public class RideServiceImpl implements RideService {
     private final PassengerService passengerService;
     private final DriverService driverService;
     private final RatingService ratingService;
+    private final JavaMailSender emailSender;
 
     @Override
     public Ride getById(Long id) {
@@ -186,5 +213,65 @@ public class RideServiceImpl implements RideService {
     private Ride getOrThrow(Long id) {
         return rideRepository.findById(id)
                 .orElseThrow(() -> new RideNotExistsException(String.format(RIDE_NOT_EXISTS, id)));
+    }
+
+    public ByteArrayOutputStream generateReport(ReportRidesRequest request) {
+        Specification<Ride> spec = Specification.where(RideSpecification.hasDriverId(request.getDriverId()))
+                .and(RideSpecification.hasPassengerId(request.getPassengerId()))
+                .and(RideSpecification.hasStatusIn(request.getStatuses()))
+                .and(RideSpecification.hasStartDateAfter(request.getStartDate()))
+                .and(RideSpecification.hasEndDateBefore(request.getEndDate()));
+
+        List<Ride> rides = rideRepository.findAll(spec);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet(REPORT_NAME);
+            HSSFRow headerRow = sheet.createRow(0);
+
+            headerRow.createCell(0).setCellValue(REPORT_DRIVER_ID);
+            headerRow.createCell(1).setCellValue(REPORT_PASSENGER_ID);
+            headerRow.createCell(2).setCellValue(REPORT_FROM);
+            headerRow.createCell(3).setCellValue(REPORT_TO);
+            headerRow.createCell(4).setCellValue(REPORT_STATUS);
+            headerRow.createCell(5).setCellValue(REPORT_START_DATE);
+            headerRow.createCell(6).setCellValue(REPORT_END_DATE);
+
+            int dataRowIndex = 1;
+            for (Ride ride : rides) {
+                HSSFRow dataRow = sheet.createRow(dataRowIndex++);
+                dataRow.createCell(0).setCellValue(ride.getDriverId());
+                dataRow.createCell(1).setCellValue(ride.getPassengerId());
+                dataRow.createCell(2).setCellValue(ride.getAddressFrom());
+                dataRow.createCell(3).setCellValue(ride.getAddressTo());
+                dataRow.createCell(4).setCellValue(ride.getStatus().toString());
+                dataRow.createCell(5).setCellValue(ride.getStartDateTime().toString());
+                dataRow.createCell(6).setCellValue(ride.getEndDateTime().toString());
+            }
+
+            workbook.write(outputStream);
+        } catch (Exception e) {
+            throw new RuntimeException(GENERATING_EXCEL_FILE_ERROR, e);
+        }
+
+        return outputStream;
+    }
+
+    public void sendEmailWithAttachment(ReportRidesRequest request) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setSubject(REPORT_NAME);
+            helper.setFrom(EMAIL_FROM);
+            helper.setTo(request.getEmailReceiver());
+            helper.setText(EMAIL_TEXT);
+
+            DataSource dataSource = new ByteArrayDataSource(generateReport(request).toByteArray(), EMAIL_DATA_SOURCE);
+            helper.addAttachment(ATTACHMENT_FILENAME, dataSource);
+
+            emailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException(SENDING_EMAIL_ERROR, e);
+        }
     }
 }

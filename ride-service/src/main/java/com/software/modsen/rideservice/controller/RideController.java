@@ -1,5 +1,6 @@
 package com.software.modsen.rideservice.controller;
 
+import com.software.modsen.rideservice.dto.request.ReportRidesRequest;
 import com.software.modsen.rideservice.dto.request.RideCancelRequest;
 import com.software.modsen.rideservice.dto.request.RideCreateRequest;
 import com.software.modsen.rideservice.dto.request.RideFinishRequest;
@@ -103,5 +104,12 @@ public class RideController {
         Long id = Long.valueOf(jwt.getClaim("userId"));
         Ride ride = rideService.changeStatus(id, request);
         return new ResponseEntity<>(rideMapper.toResponse(ride), HttpStatus.OK);
+    }
+
+    @PostMapping("/report/send")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<String> sendReport(@RequestBody @Valid ReportRidesRequest request) {
+        rideService.sendEmailWithAttachment(request);
+        return new ResponseEntity<>("Email sent successfully!", HttpStatus.OK);
     }
 }
