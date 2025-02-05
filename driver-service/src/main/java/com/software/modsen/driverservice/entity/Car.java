@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.software.modsen.driverservice.enumeration.Tariff;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -51,6 +52,7 @@ public class Car {
     @Column(name = "is_restricted")
     private boolean restricted;
 
-    @OneToOne(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonBackReference
     private Driver driver;
 }

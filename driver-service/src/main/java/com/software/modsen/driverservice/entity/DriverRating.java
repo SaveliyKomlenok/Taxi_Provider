@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,6 +39,7 @@ public class DriverRating {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
+    @JsonManagedReference
     private Driver driver;
 
     @Column(name = "version")

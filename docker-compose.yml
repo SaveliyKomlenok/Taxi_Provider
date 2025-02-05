@@ -189,6 +189,106 @@ services:
     networks:
       - taxi_provider
 
+  master:
+    image: redis:latest
+    command: redis-server --requirepass "123456"
+    networks:
+      - taxi_provider
+
+  slave:
+    image: redis:latest
+    command: redis-server --slaveof master 6379
+    depends_on:
+      - master
+    networks:
+      - taxi_provider
+
+  sentinel:
+    build: sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=10000
+    user: redis
+    depends_on:
+      - master
+      - slave
+    networks:
+      - taxi_provider
+
+  redis-node-1:
+    image: redis:latest
+    ports:
+      - "7001:6379"
+    volumes:
+      - ./redis/node-1:/data
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    networks:
+      - taxi_provider
+
+  redis-node-2:
+    image: redis:latest
+    ports:
+      - "7002:6379"
+    volumes:
+      - ./redis/node-2:/data
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    networks:
+      - taxi_provider
+
+  redis-node-3:
+    image: redis:latest
+    ports:
+      - "7003:6379"
+    volumes:
+      - ./redis/node-3:/data
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    networks:
+      - taxi_provider
+
+  redis-node-4:
+    image: redis:latest
+    ports:
+      - "7004:6379"
+    volumes:
+      - ./redis/node-4:/data
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    networks:
+      - taxi_provider
+
+  redis-node-5:
+    image: redis:latest
+    ports:
+      - "7005:6379"
+    volumes:
+      - ./redis/node-5:/data
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    networks:
+      - taxi_provider
+
+  redis-node-6:
+    image: redis:latest
+    ports:
+      - "7006:6379"
+    volumes:
+      - ./redis/node-6:/data
+    command: [ "redis-server", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes" ]
+    networks:
+      - taxi_provider
+
+  redis-cli:
+    image: redis:latest
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+    entrypoint: [ "/bin/sh", "-c", "sleep 5; redis-cli --cluster create redis-node-1:6379 redis-node-2:6379 redis-node-3:6379 redis-node-4:6379 redis-node-5:6379 redis-node-6:6379 --cluster-replicas 1 --cluster-yes" ]
+    networks:
+      - taxi_provider
+
 volumes:
   kibana:
   logstash:
