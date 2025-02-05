@@ -1,5 +1,6 @@
 package com.software.modsen.rideservice.service.impl;
 
+import com.software.modsen.rideservice.annotation.LogExecutionTime;
 import com.software.modsen.rideservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.rideservice.dto.request.RatingPassengerRequest;
 import com.software.modsen.rideservice.dto.request.RideCancelRequest;
@@ -73,6 +74,7 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    @LogExecutionTime
     public Ride create(Long passengerId, Ride ride) {
         checkPassengerRestrict(passengerId);
         ride.setPassengerId(passengerId);

@@ -7,6 +7,9 @@ import com.software.modsen.driverservice.exception.CarNotExistsException;
 import com.software.modsen.driverservice.repository.CarRepository;
 import com.software.modsen.driverservice.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
 
     @Override
+    @Cacheable(value = "cars", key = "#id")
     public Car getById(Long id) {
         return getOrThrow(id);
     }
@@ -36,20 +40,19 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CachePut(value = "cars", key = "#car.id")
     public Car save(Car car) {
-        if(carRepository.findCarByNumber(
-                car.getNumber()).isPresent()){
+        if(carRepository.findCarByNumber(car.getNumber()).isPresent()){
             throw new CarAlreadyExistsException(CAR_ALREADY_EXISTS);
         }
         return carRepository.save(car);
     }
 
     @Override
+    @CachePut(value = "cars", key = "#car.id")
     public Car update(Car car) {
         getOrThrow(car.getId());
-        Car existingCar = carRepository.findCarByNumber(
-                        car.getNumber())
-                .orElse(null);
+        Car existingCar = carRepository.findCarByNumber(car.getNumber()).orElse(null);
         if (existingCar != null && !existingCar.getId().equals(car.getId())) {
             throw new CarAlreadyExistsException(CAR_ALREADY_EXISTS);
         }
@@ -57,6 +60,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @CacheEvict(value = "cars", key = "#request.id")
     public Car changeRestrictionsStatus(CarChangeStatusRequest request) {
         Car car = getOrThrow(request.getId());
         car.setRestricted(request.isStatus());

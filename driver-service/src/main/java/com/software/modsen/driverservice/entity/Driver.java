@@ -1,5 +1,7 @@
 package com.software.modsen.driverservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.software.modsen.driverservice.enumeration.Gender;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,8 +38,9 @@ public class Driver {
     @Column(name = "driver_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "car_id")
+    @JsonManagedReference
     private Car car;
 
     @Column(name = "firstname")
@@ -65,6 +68,7 @@ public class Driver {
     @Column(name = "is_busy")
     private boolean busy;
 
-    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonBackReference
     private DriverRating driverRating;
 }

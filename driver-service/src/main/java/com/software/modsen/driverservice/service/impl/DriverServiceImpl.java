@@ -9,6 +9,7 @@ import com.software.modsen.driverservice.exception.DriverNotExistsException;
 import com.software.modsen.driverservice.repository.DriverRepository;
 import com.software.modsen.driverservice.service.CarService;
 import com.software.modsen.driverservice.service.DriverService;
+import com.software.modsen.driverservice.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -26,10 +27,17 @@ import static com.software.modsen.driverservice.util.ExceptionMessages.*;
 public class DriverServiceImpl implements DriverService {
     private final CarService carService;
     private final DriverRepository driverRepository;
+    private final RedisService redisService;
 
     @Override
     public Driver getById(Long id) {
-        return getOrThrow(id);
+        String key = "driver:" + id;
+        Driver driver = (Driver) redisService.getValue(key);
+        if (driver == null) {
+            driver = getOrThrow(id);
+            redisService.setValue(key, driver, 10);
+        }
+        return driver;
     }
 
     @Override
@@ -69,6 +77,7 @@ public class DriverServiceImpl implements DriverService {
         }
         driver.setCar(checkCarOccupancyForUpdateDriver(driver.getCar().getId(), driver.getId()));
         log.info("Updating driver");
+        redisService.evictValue("driver:" + driver.getId());
         return driverRepository.save(driver);
     }
 
@@ -88,6 +97,7 @@ public class DriverServiceImpl implements DriverService {
         Driver driver = getOrThrow(request.getId());
         driver.setRestricted(request.isStatus());
         log.info("Change driver restrict status");
+        redisService.evictValue("driver:" + driver.getId());
         return driverRepository.save(driver);
     }
 
@@ -96,6 +106,7 @@ public class DriverServiceImpl implements DriverService {
         Driver driver = getOrThrow(request.getId());
         driver.setBusy(request.isStatus());
         log.info("Change driver busy status");
+        redisService.evictValue("driver:" + driver.getId());
         return driverRepository.save(driver);
     }
 

@@ -1,5 +1,6 @@
 package com.software.modsen.driverservice.service.impl;
 
+import com.software.modsen.driverservice.annotation.CacheableDriverRating;
 import com.software.modsen.driverservice.entity.Driver;
 import com.software.modsen.driverservice.entity.DriverRating;
 import com.software.modsen.driverservice.exception.DriverRatingNotExistsException;
@@ -20,6 +21,7 @@ public class DriverRatingServiceImpl implements DriverRatingService {
 
     @Transactional
     @Override
+    @CacheableDriverRating
     public DriverRating getByDriverId(Long driverId) {
         return getOrThrow(driverId);
     }

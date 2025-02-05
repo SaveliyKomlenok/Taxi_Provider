@@ -29,6 +29,22 @@ spring:
     enabled: true
     sampler:
       probability: 1.0
+  data:
+#    redis:
+#      host: localhost
+#      port: 16379
+#      password: 123456
+#      database: 0
+#      timeout: 10000
+    redis:
+      cluster:
+        nodes:
+          - redis-node-1:7001
+          - redis-node-2:7002
+          - redis-node-3:7003
+          - redis-node-4:7004
+          - redis-node-5:7005
+          - redis-node-6:7006
 
 server:
   port: 8082
