@@ -1,0 +1,18 @@
+pipeline {
+    agent any
+    tools {
+        maven 'maven'
+    }
+    stages {
+        stage('Clean') {
+            steps {
+                bat 'mvn clean -pi driver-service -am'
+            }
+        }
+        stage('Clean') {
+            steps {
+                bat 'mvn install -pi driver-service -am'
+            }
+        }
+    }
+}
