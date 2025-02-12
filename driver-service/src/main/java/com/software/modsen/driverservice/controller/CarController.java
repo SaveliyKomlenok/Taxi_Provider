@@ -64,7 +64,7 @@ public class CarController {
 
     @PutMapping("/restrict")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<CarResponse> changeRestrictionsStatus(@RequestBody CarChangeStatusRequest request){
+    public ResponseEntity<CarResponse> changeRestrictionsStatus(@RequestBody CarChangeStatusRequest request) {
         Car car = carService.changeRestrictionsStatus(request);
         return new ResponseEntity<>(carMapper.toResponse(car), HttpStatus.OK);
     }

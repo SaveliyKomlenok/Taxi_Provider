@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.software.modsen.driverservice.util.ExceptionMessages.*;
+import static com.software.modsen.driverservice.util.ExceptionMessages.CAR_OCCUPIED;
+import static com.software.modsen.driverservice.util.ExceptionMessages.DRIVER_ALREADY_EXISTS;
+import static com.software.modsen.driverservice.util.ExceptionMessages.DRIVER_NOT_EXISTS;
 
 @Service
 @RequiredArgsConstructor
@@ -46,9 +48,9 @@ public class DriverServiceImpl implements DriverService {
     @Transactional
     @Override
     public Driver save(Driver driver) {
-        if(driverRepository.findDriverByEmailAndPhoneNumber(
+        if (driverRepository.findDriverByEmailAndPhoneNumber(
                 driver.getEmail(),
-                driver.getPhoneNumber()).isPresent()){
+                driver.getPhoneNumber()).isPresent()) {
             throw new DriverAlreadyExistsException(DRIVER_ALREADY_EXISTS);
         }
         log.info("Saving driver");

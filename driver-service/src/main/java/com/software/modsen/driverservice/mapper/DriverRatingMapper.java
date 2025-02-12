@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class DriverRatingMapper {
     private final ModelMapper mapper;
 
-    public DriverRating toEntity(DriverRatingRequest request){
+    public DriverRating toEntity(DriverRatingRequest request) {
         Driver driver = Driver.builder()
                 .id(request.getDriverId())
                 .build();

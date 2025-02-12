@@ -2,9 +2,9 @@ package com.software.modsen.driverservice.controller;
 
 import com.software.modsen.driverservice.dto.request.DriverChangeStatusRequest;
 import com.software.modsen.driverservice.dto.request.DriverCreateRequest;
+import com.software.modsen.driverservice.dto.request.DriverUpdateRequest;
 import com.software.modsen.driverservice.dto.response.DriverListResponse;
 import com.software.modsen.driverservice.dto.response.DriverResponse;
-import com.software.modsen.driverservice.dto.request.DriverUpdateRequest;
 import com.software.modsen.driverservice.entity.Driver;
 import com.software.modsen.driverservice.mapper.DriverMapper;
 import com.software.modsen.driverservice.service.DriverService;
@@ -67,14 +67,14 @@ public class DriverController {
 
     @PutMapping("/restrict")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<DriverResponse> changeRestrictionsStatus(@RequestBody DriverChangeStatusRequest request){
+    public ResponseEntity<DriverResponse> changeRestrictionsStatus(@RequestBody DriverChangeStatusRequest request) {
         Driver driver = driverService.changeRestrictionsStatus(request);
         return new ResponseEntity<>(driverMapper.toResponse(driver), HttpStatus.OK);
     }
 
     @PutMapping("/busy")
     @PreAuthorize("hasAnyRole('admin', 'driver', 'passenger')")
-    public ResponseEntity<DriverResponse> changeBusyStatus(@RequestBody DriverChangeStatusRequest request){
+    public ResponseEntity<DriverResponse> changeBusyStatus(@RequestBody DriverChangeStatusRequest request) {
         Driver driver = driverService.changeBusyStatus(request);
         return new ResponseEntity<>(driverMapper.toResponse(driver), HttpStatus.OK);
     }

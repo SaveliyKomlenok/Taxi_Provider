@@ -26,14 +26,14 @@ public class DriverRatingController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('admin', 'driver', 'passenger')")
-    public ResponseEntity<DriverRatingResponse> getDriverRating(@PathVariable Long id){
+    public ResponseEntity<DriverRatingResponse> getDriverRating(@PathVariable Long id) {
         DriverRating driverRating = driverRatingService.getByDriverId(id);
         return new ResponseEntity<>(driverRatingMapper.toResponse(driverRating), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('passenger')")
-    public ResponseEntity<DriverRatingResponse> save(@RequestBody @Valid DriverRatingRequest request){
+    public ResponseEntity<DriverRatingResponse> save(@RequestBody @Valid DriverRatingRequest request) {
         DriverRating driverRating = driverRatingService.save(driverRatingMapper.toEntity(request));
         return new ResponseEntity<>(driverRatingMapper.toResponse(driverRating), HttpStatus.OK);
     }
